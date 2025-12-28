@@ -1,8 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -99,12 +100,27 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-bold">{userData?.name}</h1>
             <p className="text-indigo-100">{userData?.email}</p>
           </div>
-          <button 
-            onClick={() => setIsEditing(!isEditing)}
-            className="bg-white text-indigo-600 px-4 py-2 rounded font-bold hover:bg-gray-100"
-          >
-            {isEditing ? "Cancel" : "Edit Profile"}
-          </button>
+          
+          <div className="flex gap-2">
+            <button 
+              onClick={() => router.push('/')}
+              className="bg-indigo-500 text-white px-4 py-2 rounded font-bold hover:bg-indigo-400"
+            >
+              Home
+            </button>
+            <button 
+              onClick={() => setIsEditing(!isEditing)}
+              className="bg-white text-indigo-600 px-4 py-2 rounded font-bold hover:bg-gray-100"
+            >
+              {isEditing ? "Cancel" : "Edit Profile"}
+            </button>
+            <button 
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* CONTENT */}

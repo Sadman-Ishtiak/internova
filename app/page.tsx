@@ -45,21 +45,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Navigation Bar (Simple) */}
-      <nav className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-indigo-600">JobPortal</h1>
-        <div className="space-x-4">
-          {!session ? (
-            <Link href="/login" className="text-gray-600 hover:text-indigo-600">Login</Link>
-          ) : (
-            <>
-              <Link href="/profile" className="text-gray-600 hover:text-indigo-600">My Profile</Link>
-              <Link href="/company" className="text-gray-600 hover:text-indigo-600">Company Dashboard</Link>
-            </>
-          )}
-        </div>
-      </nav>
-
+      
       {/* Hero Section */}
       <div className="bg-indigo-600 text-white py-12 text-center">
         <h2 className="text-4xl font-bold mb-2">Find Your Dream Job</h2>

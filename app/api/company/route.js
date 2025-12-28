@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import dbConnect from '@/lib/db';
 import Company from '@/models/Company';
 import User from '@/models/User';
-import { handler as authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 // GET: Fetch the user's company details
 export async function GET() {

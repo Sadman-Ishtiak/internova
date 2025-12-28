@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
-import { handler as authOptions } from '../auth/[...nextauth]/route'; // Import auth settings
+import { authOptions } from '@/lib/auth'; // Import auth settings
 
 export async function GET() {
   const session = await getServerSession(authOptions);

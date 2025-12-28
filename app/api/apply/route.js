@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import dbConnect from '@/lib/db';
 import Job from '@/models/Job';
 import User from '@/models/User';
-import { handler as authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(req) {
   const session = await getServerSession(authOptions);
