@@ -15,7 +15,7 @@ export default function AdminUsersPage() {
         router.push("/login");
         return;
     }
-    if (session && session.user.role !== 'admin') {
+    if (session && session.user && session.user.role !== 'admin') {
         router.push("/");
         return;
     }
@@ -89,7 +89,7 @@ export default function AdminUsersPage() {
                   <tr key={user._id} className="hover:bg-gray-50">
                     <td className="p-4 font-medium text-gray-900">
                         <div className="flex items-center gap-3">
-                            <img src={user.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`} className="w-8 h-8 rounded-full" />
+                            <img src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`} className="w-8 h-8 rounded-full" />
                             {user.name}
                         </div>
                     </td>
