@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -179,12 +179,6 @@ export default function ProfilePage() {
               className="bg-white text-indigo-600 px-4 py-2 rounded font-bold hover:bg-gray-100"
             >
               {isEditing ? "Cancel" : "Edit Profile"}
-            </button>
-            <button 
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600"
-            >
-              Logout
             </button>
           </div>
         </div>
