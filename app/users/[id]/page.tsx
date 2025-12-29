@@ -78,6 +78,14 @@ export default function PublicProfilePage() {
     </div>
   );
 
+  const safeLink = (url?: string) => {
+    if (!url) return "#";
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')) {
+      return url;
+    }
+    return `https://${url}`; // Default to https if missing protocol
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 print:bg-white print:p-0">
       <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden print:shadow-none print:rounded-none">
@@ -93,12 +101,12 @@ export default function PublicProfilePage() {
             <div className="text-center sm:text-left">
               <h1 className="text-3xl sm:text-4xl font-bold mb-2">{user.name}</h1>
               <p className="text-xl text-indigo-300 font-medium">{user.title || "Open to Work"}</p>
-              {user.contact?.location && <p className="text-indigo-200 mt-1">{user.contact.location}</p>}
+              {user.contact?.location && <p className="text-indigo-200 mt-1 text-sm">{user.contact.location}</p>}
               
               <div className="flex gap-4 mt-4 justify-center sm:justify-start print:hidden">
-                 {user.contact?.linkedin && <a href={user.contact.linkedin} target="_blank" className="text-white hover:text-indigo-300">LinkedIn</a>}
-                 {user.contact?.github && <a href={user.contact.github} target="_blank" className="text-white hover:text-indigo-300">GitHub</a>}
-                 {user.contact?.website && <a href={user.contact.website} target="_blank" className="text-white hover:text-indigo-300">Portfolio</a>}
+                 {user.contact?.linkedin && <a href={safeLink(user.contact.linkedin)} target="_blank" className="text-white hover:text-indigo-300">LinkedIn</a>}
+                 {user.contact?.github && <a href={safeLink(user.contact.github)} target="_blank" className="text-white hover:text-indigo-300">GitHub</a>}
+                 {user.contact?.website && <a href={safeLink(user.contact.website)} target="_blank" className="text-white hover:text-indigo-300">Portfolio</a>}
               </div>
 
               {/* Print-only contact details */}

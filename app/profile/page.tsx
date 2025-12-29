@@ -327,15 +327,16 @@ export default function ProfilePage() {
               
               {/* Header Info */}
               <div className="text-center border-b pb-6">
-                <h2 className="text-2xl font-semibold text-gray-800">{userData?.title || "No Title Set"}</h2>
-                {userData?.contact?.location && <p className="text-gray-500 mt-1">📍 {userData.contact.location}</p>}
+                <h2 className="text-2xl font-semibold text-gray-800">{userData?.name}</h2>
+                <h3 className="text-lg text-indigo-600 font-medium mt-1">{userData?.title || "No Title Set"}</h3>
+                {userData?.contact?.location && <p className="text-gray-500 mt-1">{userData.contact.location}</p>}
                 
                 {/* Contact Links */}
                 <div className="flex justify-center gap-4 mt-3">
                   {userData?.contact?.linkedin && <a href={userData.contact.linkedin} target="_blank" className="text-blue-600 hover:underline">LinkedIn</a>}
                   {userData?.contact?.github && <a href={userData.contact.github} target="_blank" className="text-gray-800 hover:underline">GitHub</a>}
                   {userData?.contact?.website && <a href={userData.contact.website} target="_blank" className="text-indigo-600 hover:underline">Portfolio</a>}
-                  {userData?.contact?.phone && <span className="text-gray-600">📞 {userData.contact.phone}</span>}
+                  {userData?.contact?.phone && <span className="text-gray-600">{userData.contact.phone}</span>}
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 mt-4">

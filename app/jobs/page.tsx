@@ -101,7 +101,7 @@ export default function JobsPage() {
                     alt={job.title} 
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 right-2 bg-white px-2 py-1 text-xs font-bold rounded">
+                  <div className="absolute top-2 right-2 bg-white px-2 py-1 text-xs font-bold rounded border shadow-sm text-gray-600">
                     {new Date(job.deadline).toLocaleDateString('en-GB')}
                   </div>
                 </div>

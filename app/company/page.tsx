@@ -294,8 +294,8 @@ export default function CompanyDashboard() {
                       <p className="text-gray-600 mt-2">{company.description}</p>
                       {company.contact && (
                         <div className="mt-3 text-sm text-gray-500 flex gap-4 flex-wrap">
-                          {company.contact.location && <span>📍 {company.contact.location}</span>}
-                          {company.contact.website && <a href={company.contact.website} target="_blank" className="text-indigo-600 hover:underline">🌐 Website</a>}
+                          {company.contact.location && <span>{company.contact.location}</span>}
+                          {company.contact.website && <a href={company.contact.website} target="_blank" className="text-indigo-600 hover:underline">Website</a>}
                           {company.contact.linkedin && <a href={company.contact.linkedin} target="_blank" className="text-blue-600 hover:underline">LinkedIn</a>}
                         </div>
                       )}

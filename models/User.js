@@ -1,21 +1,21 @@
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true, required: true },
+  name: { type: String, maxLength: 100 },
+  email: { type: String, unique: true, required: true, maxLength: 100 },
   password: { type: String, select: false }, // Hides password from normal queries
   role: { type: String, enum: ['admin', 'user'], default: 'user' },
   isBanned: { type: Boolean, default: false },
   
   // Profile Data (For Auto-CV)
   profileImage: String,
-  title: String, // e.g., "Full Stack Developer"
+  title: { type: String, maxLength: 200 }, // e.g., "Full Stack Developer"
   contact: {
-    phone: String,
-    linkedin: String,
-    github: String,
-    website: String,
-    location: String
+    phone: { type: String, maxLength: 50 },
+    linkedin: { type: String, maxLength: 200 },
+    github: { type: String, maxLength: 200 },
+    website: { type: String, maxLength: 200 },
+    location: { type: String, maxLength: 100 }
   },
   skills: [String], // e.g., ["React", "Node"]
   experience: [{

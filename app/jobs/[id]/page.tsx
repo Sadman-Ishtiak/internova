@@ -120,7 +120,7 @@ export default function JobDetailsPage() {
                       <span className="capitalize font-medium text-gray-900">{job.type}</span>
                     </div>
             <div className="flex items-center gap-2 mt-2 text-gray-600">
-              <span>📅 Deadline:</span>
+              <span className="font-semibold">Deadline:</span>
               <span className="font-medium text-red-600">{new Date(job.deadline).toLocaleDateString('en-GB')}</span>
             </div>
                  </div>

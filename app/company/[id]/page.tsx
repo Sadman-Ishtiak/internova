@@ -32,6 +32,14 @@ export default function PublicCompanyPage() {
   if (loading) return <div className="p-10 text-center">Loading Company...</div>;
   if (!company) return <div className="p-10 text-center text-red-500">Company not found.</div>;
 
+  const safeLink = (url?: string) => {
+    if (!url) return "#";
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       
@@ -49,26 +57,26 @@ export default function PublicCompanyPage() {
             
             {/* Contact Info */}
             {company.contact && (
-              <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-4 text-sm font-medium text-gray-500">
-                {company.contact.location && <span className="flex items-center gap-1">📍 {company.contact.location}</span>}
+              <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-6 text-sm font-medium text-gray-500">
+                {company.contact.location && <span>{company.contact.location}</span>}
                 {company.contact.website && (
-                  <a href={company.contact.website} target="_blank" className="flex items-center gap-1 text-indigo-600 hover:underline">
-                    🌐 Website
+                  <a href={safeLink(company.contact.website)} target="_blank" className="flex items-center gap-1 text-indigo-600 hover:underline">
+                    Website
                   </a>
                 )}
                 {company.contact.linkedin && (
-                  <a href={company.contact.linkedin} target="_blank" className="flex items-center gap-1 text-blue-600 hover:underline">
-                    💼 LinkedIn
+                  <a href={safeLink(company.contact.linkedin)} target="_blank" className="flex items-center gap-1 text-blue-600 hover:underline">
+                    LinkedIn
                   </a>
                 )}
                 {company.contact.email && (
                    <a href={`mailto:${company.contact.email}`} className="flex items-center gap-1 text-gray-700 hover:text-black">
-                     📧 {company.contact.email}
+                     {company.contact.email}
                    </a>
                 )}
                  {company.contact.phone && (
                    <span className="flex items-center gap-1">
-                     📞 {company.contact.phone}
+                     {company.contact.phone}
                    </span>
                 )}
               </div>
