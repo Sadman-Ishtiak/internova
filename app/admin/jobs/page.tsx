@@ -16,7 +16,7 @@ export default function AdminJobsPage() {
         router.push("/login");
         return;
     }
-    if (session && session.user.role !== 'admin') {
+    if (session && session.user && session.user.role !== 'admin') {
         router.push("/");
         return;
     }
