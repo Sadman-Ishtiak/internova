@@ -2,7 +2,15 @@ import mongoose from 'mongoose';
 
 const CompanySchema = new mongoose.Schema({
   name: { type: String, required: true },
+  imageUrl: String,
   description: String,
+  contact: {
+    website: String,
+    linkedin: String,
+    email: String,
+    phone: String,
+    location: String
+  },
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   managers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   status: { type: String, enum: ['active', 'sunset'], default: 'active' },

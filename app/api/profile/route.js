@@ -39,11 +39,13 @@ export async function PUT(req) {
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
       {
+        name: data.name, // Allow name update
         title: data.title,
         skills: data.skills, // Array of strings
         experience: data.experience, // Array of objects
         certifications: data.certifications, // Array of objects
         profileImage: data.profileImage, // URL string
+        contact: data.contact, // Object { phone, linkedin, etc. }
       },
       { new: true }
     );

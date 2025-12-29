@@ -10,6 +10,13 @@ const UserSchema = new mongoose.Schema({
   // Profile Data (For Auto-CV)
   profileImage: String,
   title: String, // e.g., "Full Stack Developer"
+  contact: {
+    phone: String,
+    linkedin: String,
+    github: String,
+    website: String,
+    location: String
+  },
   skills: [String], // e.g., ["React", "Node"]
   experience: [{
     company: String,
@@ -19,8 +26,14 @@ const UserSchema = new mongoose.Schema({
   }],
   certifications: [{
     name: String,
-    imageUrl: String,
-    date: Date
+    issuer: String,
+    date: Date,
+    url: String,
+    type: { 
+      type: String, 
+      enum: ['Academic', 'Professional', 'Extracurricular'], 
+      default: 'Professional' 
+    }
   }],
   
   // Company Association

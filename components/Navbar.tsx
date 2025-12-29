@@ -7,14 +7,14 @@ export default function Navbar() {
   const { data: session } = useSession();
 
   return (
-    <nav className="bg-white shadow border-b sticky top-0 z-50">
+    <nav className="bg-white shadow border-b sticky top-0 z-50 print:hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           
           {/* Logo / Home Link */}
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold text-indigo-600 hover:text-indigo-500">
-              JobPortal
+              Internova
             </Link>
           </div>
 
@@ -37,12 +37,25 @@ export default function Navbar() {
                 <Link href="/jobs" className="text-gray-600 hover:text-indigo-600 font-medium px-3 py-2">
                   Browse Jobs
                 </Link>
-                <Link href="/profile" className="text-gray-600 hover:text-indigo-600 font-medium px-3 py-2">
-                  My Profile
+                
+                <Link href="/profile" className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 font-medium px-3 py-2 group">
+                  <img 
+                    src={session.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user?.name || "User")}&background=random`} 
+                    alt="Profile" 
+                    className="w-8 h-8 rounded-full border border-gray-200 group-hover:border-indigo-400 object-cover"
+                  />
+                  <span>My Profile</span>
                 </Link>
+
                 <Link href="/company" className="text-gray-600 hover:text-indigo-600 font-medium px-3 py-2">
                   Company Dashboard
                 </Link>
+
+                {session.user?.role === 'admin' && (
+                  <Link href="/admin" className="text-red-600 hover:text-red-800 font-medium px-3 py-2 border border-red-200 rounded-md bg-red-50">
+                    Admin Panel
+                  </Link>
+                )}
                 
                 <button 
                   onClick={() => signOut({ callbackUrl: '/login' })}

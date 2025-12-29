@@ -2,20 +2,33 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 
-export default function Home() {
+export default function JobsPage() {
   const { data: session } = useSession();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Filters
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
 
+  // Debounce search to avoid too many requests
   useEffect(() => {
-    fetchJobs();
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      fetchJobs();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, typeFilter]);
 
   const fetchJobs = async () => {
+    setLoading(true);
     try {
-      const res = await fetch("/api/jobs");
+      const params = new URLSearchParams();
+      if (searchTerm) params.append("search", searchTerm);
+      if (typeFilter !== "all") params.append("type", typeFilter);
+
+      const res = await fetch(`/api/jobs?${params.toString()}`);
       const data = await res.json();
       setJobs(data.jobs || []);
     } catch (error) {
@@ -44,20 +57,35 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      
-      {/* Hero Section */}
-      <div className="bg-indigo-600 text-white py-12 text-center">
-        <h2 className="text-4xl font-bold mb-2">Find Your Dream Job</h2>
-        <p className="text-indigo-100">Browse active circulars and apply with one click.</p>
-      </div>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Browse Opportunities</h1>
 
-      {/* Job List */}
-      <div className="max-w-6xl mx-auto p-8">
+        {/* Search & Filter Bar */}
+        <div className="bg-white p-4 rounded shadow mb-8 flex flex-col md:flex-row gap-4">
+          <input 
+            type="text" 
+            placeholder="Search by title or skill..." 
+            className="flex-1 border p-2 rounded"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <select 
+            className="border p-2 rounded w-full md:w-48"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="all">All Types</option>
+            <option value="job">Jobs Only</option>
+            <option value="internship">Internships Only</option>
+          </select>
+        </div>
+
+        {/* Job Grid */}
         {loading ? (
-          <p className="text-center">Loading circulars...</p>
+          <p className="text-center">Loading...</p>
         ) : jobs.length === 0 ? (
-          <p className="text-center text-gray-500">No active circulars found.</p>
+          <p className="text-center text-gray-500">No opportunities found matching your criteria.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
@@ -66,7 +94,7 @@ export default function Home() {
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
                 onClick={() => window.location.href = `/jobs/${job._id}`}
               >
-                {/* Circular Image */}
+                {/* Image */}
                 <div className="h-48 bg-gray-200 relative">
                   <img 
                     src={job.imageUrl} 
@@ -109,6 +137,6 @@ export default function Home() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

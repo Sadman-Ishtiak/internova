@@ -7,8 +7,8 @@ import Navbar from "@/components/Navbar"; // Import the new component
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Job Portal",
-  description: "A secure job portal with buzzword matching",
+  title: "Internova",
+  description: "Find your next internship or job with Internova",
 };
 
 export default function RootLayout({

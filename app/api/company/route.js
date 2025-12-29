@@ -28,7 +28,7 @@ export async function POST(req) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { name, description } = await req.json();
+    const { name, description, imageUrl, contact } = await req.json();
     await dbConnect();
 
     // Check if user is already in a company
@@ -41,6 +41,8 @@ export async function POST(req) {
     const newCompany = await Company.create({
       name,
       description,
+      imageUrl,
+      contact,
       ownerId: user._id,
       managers: [],
       status: 'active'
@@ -52,6 +54,37 @@ export async function POST(req) {
     await user.save();
 
     return NextResponse.json({ success: true, company: newCompany });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// PUT: Update company details
+export async function PUT(req) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    const { name, description, imageUrl, status, contact } = await req.json();
+    await dbConnect();
+
+    // Find company where user is owner
+    const company = await Company.findOne({ ownerId: session.user.id });
+
+    if (!company) {
+      return NextResponse.json({ error: "Company not found or unauthorized" }, { status: 404 });
+    }
+
+    // Update fields
+    if (name) company.name = name;
+    if (description) company.description = description;
+    if (imageUrl) company.imageUrl = imageUrl;
+    if (status) company.status = status;
+    if (contact) company.contact = contact;
+
+    await company.save();
+
+    return NextResponse.json({ success: true, company });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
