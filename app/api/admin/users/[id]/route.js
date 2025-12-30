@@ -4,6 +4,7 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import Job from '@/models/Job';
 import { authOptions } from '@/lib/auth';
+import { isValidObjectId } from 'mongoose';
 
 // DELETE USER
 export async function DELETE(req, { params }) {
@@ -13,6 +14,12 @@ export async function DELETE(req, { params }) {
   }
 
   const { id } = await params;
+  
+  // Validate ObjectId format
+  if (!isValidObjectId(id)) {
+    return NextResponse.json({ error: "Invalid user ID format" }, { status: 400 });
+  }
+
   await dbConnect();
 
   try {
@@ -31,6 +38,7 @@ export async function DELETE(req, { params }) {
     
     return NextResponse.json({ success: true, message: "User deleted and removed from all job applications" });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error deleting user:', error);
+    return NextResponse.json({ error: "Failed to delete user" }, { status: 500 });
   }
-}}
+}

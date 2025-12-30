@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const calculateTimeLeft = (deadline: string) => {
   const difference = +new Date(deadline) - +new Date();
@@ -27,7 +27,7 @@ export default function Countdown({ deadline }: { deadline: string }) {
     return () => clearTimeout(timer);
   });
 
-  const timerComponents: JSX.Element[] = [];
+  const timerComponents: React.ReactNode[] = [];
 
   Object.keys(timeLeft).forEach((interval) => {
     if (!timeLeft[interval] && interval !== 'days' && timerComponents.length === 0) return;

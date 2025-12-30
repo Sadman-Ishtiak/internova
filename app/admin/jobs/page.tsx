@@ -56,8 +56,8 @@ export default function AdminJobsPage() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Job Listings Management</h1>
 
-      <div className="bg-card shadow-md rounded-lg overflow-hidden border border-border">
-        <table className="w-full text-left border-collapse">
+        <div className="bg-card shadow-md rounded-lg overflow-hidden border border-border">
+          <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-muted border-b border-border">
               <th className="p-4 font-semibold text-muted-foreground">Job Title</th>
@@ -91,8 +91,7 @@ export default function AdminJobsPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
+          </table>
         </div>
       </div>
     </div>
