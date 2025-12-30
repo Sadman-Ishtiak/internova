@@ -6,11 +6,13 @@ import nodemailer from 'nodemailer';
 
 // This route is called automatically by Vercel
 export async function GET(req) {
-  // Security: Verify the request comes from Vercel Cron (optional but recommended)
-  // const authHeader = req.headers.get('authorization');
-  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return new NextResponse('Unauthorized', { status: 401 });
-  // }
+  // Security: Verify the request comes from Vercel Cron
+  const authHeader = req.headers.get('authorization');
+  if (!process.env.CRON_SECRET) {
+    console.warn('WARNING: CRON_SECRET not configured. Cron endpoint is publicly accessible!');
+  } else if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
 
   await dbConnect();
 
@@ -25,7 +27,12 @@ export async function GET(req) {
       return NextResponse.json({ message: "No expired jobs found" });
     }
 
-    // 2. Setup Email Transporter
+    // 2. Setup Email Transporter with validation
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('Email credentials not configured');
+      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+    }
+    
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -44,8 +51,11 @@ export async function GET(req) {
       
       sortedApplicants.forEach(app => {
         if (app.userId) {
-          const profileLink = `${process.env.NEXTAUTH_URL}/profile`; // In real app, you'd have public profiles
-          csvContent += `"${app.userId.name}","${app.userId.email}","${app.userId.matchScore.toFixed(1)}","${profileLink}"\n`;
+          const profileLink = `${process.env.NEXTAUTH_URL}/profile/${app.userId._id}`;
+          const matchScore = app.matchScore ? app.matchScore.toFixed(1) : 'N/A';
+          const escapedName = (app.userId.name || '').replace(/"/g, '""');
+          const escapedEmail = (app.userId.email || '').replace(/"/g, '""');
+          csvContent += `"${escapedName}","${escapedEmail}","${matchScore}","${profileLink}"\n`;
         }
       });
 

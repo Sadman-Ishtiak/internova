@@ -65,14 +65,13 @@ export default function PublicProfilePage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
     </div>
   );
 
   if (error || !user) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-600">
-      <h1 className="text-4xl font-bold mb-4">404</h1>
+          <div className="min-h-screen flex flex-col items-center justify-center text-gray-600">      <h1 className="text-4xl font-bold mb-4">404</h1>
       <p className="text-xl mb-6">User not found or profile is private.</p>
       <Link href="/" className="text-indigo-600 hover:underline">Return Home</Link>
     </div>
@@ -87,8 +86,8 @@ export default function PublicProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 print:bg-white print:p-0">
-      <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden print:shadow-none print:rounded-none">
+    <div className="min-h-screen bg-muted py-12 px-4 sm:px-6 lg:px-8 print:bg-white print:p-0">
+      <div className="max-w-5xl mx-auto bg-card shadow-2xl rounded-lg overflow-hidden print:shadow-none print:rounded-none">
         
         {/* Header Section */}
         <div className="bg-slate-900 text-white p-8 sm:p-12 relative overflow-hidden">
@@ -127,18 +126,18 @@ export default function PublicProfilePage() {
         {/* TOP: Skills (Full Width) */}
         <div className="p-8 pb-0 sm:p-12 sm:pb-0">
             <section>
-              <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wider border-b-2 border-indigo-500 pb-2 mb-4">
+              <h2 className="text-xl font-bold text-foreground uppercase tracking-wider border-b-2 border-indigo-500 pb-2 mb-4">
                 Skills & Technologies
               </h2>
               <div className="flex flex-wrap gap-2">
                 {user.skills && user.skills.length > 0 ? (
                   user.skills.map((skill, index) => (
-                    <span key={index} className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-md text-sm font-bold border border-indigo-100">
+                    <span key={index} className="bg-primary/10 text-primary px-4 py-2 rounded-md text-sm font-bold border border-primary/20">
                       {skill}
                     </span>
                   ))
                 ) : (
-                  <p className="text-gray-500 italic">No skills listed.</p>
+                  <p className="text-muted-foreground italic">No skills listed.</p>
                 )}
               </div>
             </section>

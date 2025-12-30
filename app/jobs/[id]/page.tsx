@@ -53,8 +53,8 @@ export default function JobDetailsPage() {
   if (!job) return <div className="p-10 text-center text-red-500">Job not found.</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+    <div className="min-h-screen p-8">
+      <div className="max-w-5xl mx-auto bg-card shadow-xl rounded-lg overflow-hidden border border-border">
         
         {/* HERO IMAGE */}
         <div className="h-64 w-full relative">
@@ -85,19 +85,19 @@ export default function JobDetailsPage() {
            {/* LEFT COLUMN: Details */}
            <div className="md:col-span-2 space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">About the Role</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-4">About the Role</h2>
                 {/* Since we don't have a long description field in the Job model yet, we use a placeholder or the title as context */}
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   We are looking for a talented <strong>{job.title}</strong> to join our team at <strong>{job.companyId?.name}</strong>. 
                   This is a great opportunity to work in a dynamic environment and grow your career.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Required Skills</h3>
+                <h3 className="text-xl font-bold text-foreground mb-4">Required Skills</h3>
                 <div className="flex flex-wrap gap-2">
                   {job.requiredSkills.map((skill: string, i: number) => (
-                    <span key={i} className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium border border-indigo-100">
+                    <span key={i} className="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium border border-primary/20">
                       {skill}
                     </span>
                   ))}
@@ -107,27 +107,27 @@ export default function JobDetailsPage() {
 
            {/* RIGHT COLUMN: Action Card */}
            <div className="md:col-span-1">
-              <div className="bg-gray-50 p-6 rounded-lg border sticky top-24">
-                 <h3 className="font-bold text-gray-800 mb-4 text-lg">Job Overview</h3>
+              <div className="bg-muted/50 p-6 rounded-lg border border-border sticky top-24">
+                 <h3 className="font-bold text-foreground mb-4 text-lg">Job Overview</h3>
                  
-                 <div className="space-y-3 text-sm text-gray-600 mb-6">
+                 <div className="space-y-3 text-sm text-muted-foreground mb-6">
                     <div className="flex justify-between">
                       <span>Posted By:</span>
-                      <span className="font-medium text-gray-900">{job.companyId?.name}</span>
+                      <span className="font-medium text-foreground">{job.companyId?.name}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Type:</span>
-                      <span className="capitalize font-medium text-gray-900">{job.type}</span>
+                      <span className="capitalize font-medium text-foreground">{job.type}</span>
                     </div>
-            <div className="flex items-center gap-2 mt-2 text-gray-600">
+            <div className="flex items-center gap-2 mt-2 text-muted-foreground">
               <span className="font-semibold">Deadline:</span>
-              <span className="font-medium text-red-600">{new Date(job.deadline).toLocaleDateString('en-GB')}</span>
+              <span className="font-medium text-destructive">{new Date(job.deadline).toLocaleDateString('en-GB')}</span>
             </div>
                  </div>
 
                  <button 
                    onClick={handleApply}
-                   className="w-full bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition shadow-lg"
+                   className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-bold hover:opacity-90 transition shadow-lg"
                  >
                    Apply Now
                  </button>

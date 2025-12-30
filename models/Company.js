@@ -4,12 +4,13 @@ const CompanySchema = new mongoose.Schema({
   name: { type: String, required: true },
   imageUrl: String,
   description: String,
+  industry: { type: String, default: 'Tech' }, // e.g., Tech, Finance, Healthcare
   contact: {
     website: String,
     linkedin: String,
     email: String,
     phone: String,
-    location: String
+    location: [String]
   },
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   managers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

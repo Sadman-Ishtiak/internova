@@ -52,26 +52,25 @@ export default function AdminJobsPage() {
   if (loading) return <div className="p-10 text-center">Loading Jobs...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Job Listings Management</h1>
 
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-gray-100 border-b">
-                <tr>
-                  <th className="p-4 font-semibold text-gray-600">Job Title</th>
-                  <th className="p-4 font-semibold text-gray-600">Company</th>
-                  <th className="p-4 font-semibold text-gray-600">Type</th>
-                  <th className="p-4 font-semibold text-gray-600">Deadline</th>
-                  <th className="p-4 font-semibold text-gray-600 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {jobs.map((job) => (
-                  <tr key={job._id} className="hover:bg-gray-50">
-                    <td className="p-4 font-medium text-gray-900">
+      <div className="bg-card shadow-md rounded-lg overflow-hidden border border-border">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-muted border-b border-border">
+              <th className="p-4 font-semibold text-muted-foreground">Job Title</th>
+              <th className="p-4 font-semibold text-muted-foreground">Company</th>
+              <th className="p-4 font-semibold text-muted-foreground">Type</th>
+              <th className="p-4 font-semibold text-muted-foreground">Deadline</th>
+              <th className="p-4 font-semibold text-muted-foreground">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {jobs.map(job => (
+              <tr key={job._id} className="hover:bg-accent border-b border-border last:border-0">
+                <td className="p-4 font-medium text-foreground">
                         <Link href={`/jobs/${job._id}`} className="hover:underline text-indigo-600">
                             {job.title}
                         </Link>

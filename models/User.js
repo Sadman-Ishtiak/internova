@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema({
     linkedin: { type: String, maxLength: 200 },
     github: { type: String, maxLength: 200 },
     website: { type: String, maxLength: 200 },
-    location: { type: String, maxLength: 100 }
+    location: [String] // e.g. ["London", "Remote"]
   },
   skills: [String], // e.g., ["React", "Node"]
   experience: [{

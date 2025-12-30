@@ -13,11 +13,16 @@ export async function GET(req) {
   const companyId = searchParams.get('companyId');
   const search = searchParams.get('search');
   const type = searchParams.get('type');
+  const includeExpired = searchParams.get('includeExpired') === 'true';
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
+  const limit = Math.min(100, parseInt(searchParams.get('limit') || '20')); // Max 100 per page
+  const skip = (page - 1) * limit;
 
-  // Only show jobs where deadline is in the future
-  let query = { 
-    deadline: { $gt: new Date() } 
-  };
+  // Only show jobs where deadline is in the future, unless includeExpired is set
+  let query = {};
+  if (!includeExpired) {
+    query.deadline = { $gt: new Date() };
+  }
 
   if (companyId) {
     query.companyId = companyId;
@@ -28,7 +33,9 @@ export async function GET(req) {
   }
 
   if (search) {
-    const searchRegex = new RegExp(search, 'i'); // Case-insensitive
+    // Escape regex special characters to prevent ReDoS attacks
+    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const searchRegex = new RegExp(escapedSearch, 'i'); // Case-insensitive
     query.$or = [
       { title: { $regex: searchRegex } },
       { requiredSkills: { $regex: searchRegex } }
@@ -36,8 +43,24 @@ export async function GET(req) {
   }
 
   // Populate company details so we can show the company name
-  const jobs = await Job.find(query).populate('companyId', 'name');
-  return NextResponse.json({ jobs });
+  const jobs = await Job.find(query).sort({ deadline: -1 }).skip(skip).limit(limit);
+  const totalJobs = await Job.countDocuments(query);
+  const totalPages = Math.ceil(totalJobs / limit);
+  
+  return NextResponse.json({ 
+    jobs: jobs.map(job => ({
+      ...job.toObject(),
+      companyId: typeof job.companyId === 'object' ? job.companyId : { _id: job.companyId }
+    })),
+    pagination: {
+      page,
+      limit,
+      totalJobs,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1
+    }
+  });
 }
 
 // POST: Create a new Job (Company Only)
@@ -48,6 +71,20 @@ export async function POST(req) {
   try {
     const data = await req.json();
     await dbConnect();
+    
+    // Validate required fields
+    if (!data.title || !data.title.trim()) {
+      return NextResponse.json({ error: "Job title is required" }, { status: 400 });
+    }
+    if (!data.deadline) {
+      return NextResponse.json({ error: "Deadline is required" }, { status: 400 });
+    }
+    if (new Date(data.deadline) <= new Date()) {
+      return NextResponse.json({ error: "Deadline must be in the future" }, { status: 400 });
+    }
+    if (!data.requiredSkills || data.requiredSkills.length === 0) {
+      return NextResponse.json({ error: "At least one skill is required" }, { status: 400 });
+    }
 
     // Verify User Role
     const user = await User.findById(session.user.id);
@@ -56,12 +93,19 @@ export async function POST(req) {
     if (!user.companyId) {
       return NextResponse.json({ error: "You must belong to a company to post jobs" }, { status: 403 });
     }
+    
+    // Verify company exists
+    const company = await Company.findById(user.companyId);
+    if (!company) {
+      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    }
 
     const newJob = await Job.create({
       companyId: user.companyId,
       title: data.title,
       type: data.type || 'job',
-      imageUrl: data.imageUrl, // This will be the URL of the uploaded image
+      imageUrl: data.imageUrl,
+      salary: data.salary,
       requiredSkills: data.requiredSkills, // Array of strings (Buzzwords)
       deadline: new Date(data.deadline),
       applicants: []
@@ -79,8 +123,19 @@ export async function PUT(req) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { jobId, title, type, imageUrl, requiredSkills, deadline } = await req.json();
+    const { jobId, title, type, imageUrl, salary, requiredSkills, deadline } = await req.json();
     await dbConnect();
+    
+    // Validate required fields
+    if (title && !title.trim()) {
+      return NextResponse.json({ error: "Job title cannot be empty" }, { status: 400 });
+    }
+    if (deadline && new Date(deadline) <= new Date()) {
+      return NextResponse.json({ error: "Deadline must be in the future" }, { status: 400 });
+    }
+    if (requiredSkills && requiredSkills.length === 0) {
+      return NextResponse.json({ error: "At least one skill is required" }, { status: 400 });
+    }
 
     const user = await User.findById(session.user.id);
     const job = await Job.findById(jobId);
@@ -96,6 +151,7 @@ export async function PUT(req) {
     if (title) job.title = title;
     if (type) job.type = type;
     if (imageUrl) job.imageUrl = imageUrl;
+    if (salary) job.salary = salary;
     if (requiredSkills) job.requiredSkills = requiredSkills;
     if (deadline) job.deadline = new Date(deadline);
 

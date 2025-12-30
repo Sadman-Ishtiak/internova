@@ -7,6 +7,13 @@ import nodemailer from 'nodemailer';
 export async function POST(req) {
   try {
     const { email } = await req.json();
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    }
+    
     await dbConnect();
 
     // 1. Check if user already exists
@@ -14,18 +21,35 @@ export async function POST(req) {
     if (existingUser) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
+    
+    // 2. Check for rate limiting - prevent spam (max 3 OTPs per 15 minutes)
+    const recentOtpCount = await Otp.countDocuments({
+      email,
+      createdAt: { $gt: new Date(Date.now() - 15 * 60 * 1000) } // Last 15 minutes
+    });
+    
+    if (recentOtpCount >= 3) {
+      return NextResponse.json({ 
+        error: "Too many OTP requests. Please try again in 15 minutes." 
+      }, { status: 429 });
+    }
 
-    // 2. Generate 6 digit OTP
+    // 3. Generate 6 digit OTP
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 3. Save to DB (Update if exists or Create new)
+    // 4. Save to DB (Update if exists or Create new)
     await Otp.findOneAndUpdate(
       { email }, 
-      { otp: otpCode }, 
+      { otp: otpCode, createdAt: new Date() }, 
       { upsert: true, new: true }
     );
 
-    // 4. Send Email
+    // 5. Send Email
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('Email credentials not configured');
+      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+    }
+    
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {

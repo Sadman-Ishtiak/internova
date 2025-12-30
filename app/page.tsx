@@ -44,7 +44,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       
       {/* Hero Section */}
       <div className="bg-indigo-600 text-white py-12 text-center">
@@ -57,23 +57,23 @@ export default function Home() {
         {loading ? (
           <p className="text-center">Loading circulars...</p>
         ) : jobs.length === 0 ? (
-          <p className="text-center text-gray-500">No active circulars found.</p>
+          <p className="text-center text-muted-foreground">No active circulars found.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
               <div 
                 key={job._id} 
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
+                className="bg-card border border-border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
                 onClick={() => window.location.href = `/jobs/${job._id}`}
               >
                 {/* Circular Image */}
-                <div className="h-48 bg-gray-200 relative">
+                <div className="h-48 bg-muted relative">
                   <img 
                     src={job.imageUrl} 
                     alt={job.title} 
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 right-2 bg-white px-2 py-1 text-xs font-bold rounded">
+                  <div className="absolute top-2 right-2 bg-card text-card-foreground px-2 py-1 text-xs font-bold rounded">
                     {new Date(job.deadline).toLocaleDateString('en-GB')}
                   </div>
                 </div>
@@ -81,16 +81,16 @@ export default function Home() {
                 {/* Content */}
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-1">
-                    <h3 className="text-xl font-bold text-gray-800">{job.title}</h3>
+                    <h3 className="text-xl font-bold text-foreground">{job.title}</h3>
                     <span className={`text-xs px-2 py-1 rounded text-white font-bold ${job.type === 'internship' ? 'bg-purple-500' : 'bg-blue-500'}`}>
                        {job.type === 'internship' ? 'Internship' : 'Job'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-3">{job.companyId?.name || "Unknown Company"}</p>
+                  <p className="text-sm text-muted-foreground mb-3">{job.companyId?.name || "Unknown Company"}</p>
                   
                   <div className="flex flex-wrap gap-1 mb-4">
                     {job.requiredSkills.slice(0, 3).map((skill: string, i: number) => (
-                      <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">
+                      <span key={i} className="text-xs bg-accent px-2 py-1 rounded text-accent-foreground">
                         {skill}
                       </span>
                     ))}
@@ -109,6 +109,6 @@ export default function Home() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
