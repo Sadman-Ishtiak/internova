@@ -281,14 +281,14 @@ export default function CompanyDashboard() {
           {/* Company Info */}
           <div className="bg-white p-6 rounded shadow-md">
             {!isEditingCompany ? (
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
                 <img 
                   src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
                   alt="Logo" 
                   className="w-24 h-24 rounded object-cover border"
                 />
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
+                <div className="flex-1 w-full">
+                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div>
                       <h1 className="text-3xl font-bold text-gray-800">{company.name}</h1>
                       <p className="text-gray-600 mt-2">{company.description}</p>
@@ -496,11 +496,11 @@ export default function CompanyDashboard() {
                 <p className="text-gray-500">No active jobs posted yet.</p>
               ) : (
                 myJobs.map((job) => (
-                  <div key={job._id} className="bg-white p-4 rounded shadow flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <img src={job.imageUrl} alt="" className="w-16 h-16 object-cover rounded" />
+                  <div key={job._id} className="bg-white p-4 rounded shadow flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex items-center gap-4 w-full md:w-auto">
+                      <img src={job.imageUrl} alt="" className="w-16 h-16 object-cover rounded flex-shrink-0" />
                       <div>
-                        <h4 className="font-bold text-lg flex items-center gap-2">
+                        <h4 className="font-bold text-lg flex flex-wrap items-center gap-2">
                           {job.title}
                           <span className={`text-xs px-2 py-0.5 rounded text-white ${job.type === 'internship' ? 'bg-purple-500' : 'bg-blue-500'}`}>
                             {job.type === 'internship' ? 'Internship' : 'Job'}

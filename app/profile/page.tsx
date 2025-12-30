@@ -161,22 +161,22 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
         
         {/* HEADER */}
-        <div className="bg-indigo-600 p-6 text-white flex justify-between items-center">
-          <div>
+        <div className="bg-indigo-600 p-6 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-center md:text-left">
             <h1 className="text-3xl font-bold">{userData?.name}</h1>
             <p className="text-indigo-100">{userData?.email}</p>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <button 
               onClick={() => window.open(`/users/${userData._id}`, '_blank')}
-              className="bg-emerald-500 text-white px-4 py-2 rounded font-bold hover:bg-emerald-400"
+              className="bg-emerald-500 text-white px-4 py-2 rounded font-bold hover:bg-emerald-400 text-center"
             >
               View Public CV
             </button>
             <button 
               onClick={() => setIsEditing(!isEditing)}
-              className="bg-white text-indigo-600 px-4 py-2 rounded font-bold hover:bg-gray-100"
+              className="bg-white text-indigo-600 px-4 py-2 rounded font-bold hover:bg-gray-100 text-center"
             >
               {isEditing ? "Cancel" : "Edit Profile"}
             </button>
@@ -397,6 +397,18 @@ export default function ProfilePage() {
                    </div>
                 </div>
               )}
+
+              {/* Employer Zone */}
+              <div className="mt-12 pt-8 border-t border-gray-100 text-center">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Employer Zone</h3>
+                <p className="text-gray-500 mb-4 text-sm">Are you hiring? Manage your company profile and job listings.</p>
+                <button 
+                  onClick={() => router.push('/company')}
+                  className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-800 transition shadow-lg"
+                >
+                  {userData?.companyId ? "Manage Company Dashboard" : "Create Company Profile"}
+                </button>
+              </div>
 
             </div>
           )}
