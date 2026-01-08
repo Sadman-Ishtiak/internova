@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Filter,
   LayoutGrid,
-  List
+  List,
+  ShieldCheck
 } from "lucide-react";
 import Countdown from "@/components/Countdown";
 

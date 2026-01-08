@@ -3,30 +3,29 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { 
+  User, 
+  MapPin, 
+  Linkedin, 
+  Github, 
+  Globe, 
+  Phone, 
+  Briefcase, 
+  Settings,
+  ExternalLink,
+  ChevronRight,
+  GraduationCap,
+  Mail,
+  Award
+} from "lucide-react";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   
   const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  
   const [userData, setUserData] = useState<any>(null);
-  
-  // Form States
-  const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [skills, setSkills] = useState("");
-  const [experience, setExperience] = useState<any[]>([]);
-  const [contact, setContact] = useState({
-    phone: "",
-    linkedin: "",
-    github: "",
-    website: "",
-    location: "" // Commas separated
-  });
-  const [certifications, setCertifications] = useState<any[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -42,19 +41,6 @@ export default function ProfilePage() {
       const data = await res.json();
       if (data.user) {
         setUserData(data.user);
-        setName(data.user.name || "");
-        setTitle(data.user.title || "");
-        setImageUrl(data.user.profileImage || "");
-        setSkills(data.user.skills?.join(", ") || "");
-        setExperience(data.user.experience || []);
-        setContact({
-          phone: data.user.contact?.phone || "",
-          linkedin: data.user.contact?.linkedin || "",
-          github: data.user.contact?.github || "",
-          website: data.user.contact?.website || "",
-          location: data.user.contact?.location?.join(", ") || ""
-        });
-        setCertifications(data.user.certifications || []);
       }
     } catch (err) {
       console.error(err);
@@ -63,272 +49,192 @@ export default function ProfilePage() {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      setLoading(true);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (res.ok) setImageUrl(data.url);
-      else alert("Upload failed");
-    } catch (err) {
-      console.error(err);
-      alert("Error uploading image");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      const skillsArray = skills.split(",").map(s => s.trim()).filter(s => s);
-      const locationArray = contact.location.split(",").map(s => s.trim()).filter(s => s);
-      
-      const res = await fetch("/api/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          title,
-          profileImage: imageUrl,
-          skills: skillsArray,
-          experience,
-          contact: { ...contact, location: locationArray },
-          certifications
-        })
-      });
-      
-      if (res.ok) {
-        setIsEditing(false);
-        fetchProfile();
-      }
-    } catch (err) {
-      alert("Failed to save");
-    }
-  };
-
-  const addExperience = () => setExperience([...experience, { company: "", role: "", years: 0, description: "" }]);
-  const updateExperience = (index: number, field: string, value: any) => {
-    const newExp = [...experience];
-    newExp[index][field] = value;
-    setExperience(newExp);
-  };
-  const removeExperience = (index: number) => setExperience(experience.filter((_, i) => i !== index));
-
-  const addCertification = () => setCertifications([...certifications, { name: "", issuer: "", date: "", type: "Professional", url: "" }]);
-  const updateCertification = (index: number, field: string, value: any) => {
-    const newCerts = [...certifications];
-    newCerts[index][field] = value;
-    setCertifications(newCerts);
-  };
-  const removeCertification = (index: number) => setCertifications(certifications.filter((_, i) => i !== index));
-
-  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto bg-card shadow-xl rounded-lg overflow-hidden border border-border">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 py-12 px-4">
+      <div className="max-w-5xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="bg-primary p-6 text-primary-foreground flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-center md:text-left">
-            <h1 className="text-3xl font-bold">{userData?.name}</h1>
-            <p className="text-primary-foreground/80">{userData?.email}</p>
+        {/* HEADER SECTION */}
+        <div className="bg-white dark:bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
+          <div className="h-32 bg-indigo-600 relative">
+             <div className="absolute -bottom-12 left-8 w-32 h-32 rounded-3xl bg-white p-1 border border-border shadow-xl overflow-hidden">
+                <img 
+                  src={userData?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData?.name || "User")}&background=random`} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <button 
-              onClick={() => window.open(`/users/${userData._id}`, '_blank')}
-              className="bg-emerald-500 text-white px-4 py-2 rounded font-bold hover:bg-emerald-400 text-center"
-            >
-              View Public CV
-            </button>
-            <button 
-              onClick={() => setIsEditing(!isEditing)}
-              className="bg-card text-primary px-4 py-2 rounded font-bold hover:bg-accent text-center"
-            >
-              {isEditing ? "Cancel" : "Edit Profile"}
-            </button>
-          </div>
-        </div>
-
-        {/* CONTENT */}
-        <div className="p-8">
-          {isEditing ? (
-            <div className="space-y-8">
-              {/* Fields for name, title, image */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-bold mb-2">Profile Image</label>
-                  <div className="flex items-center gap-4">
-                    {imageUrl && <img src={imageUrl} alt="Preview" className="w-16 h-16 rounded-full object-cover border"/>}
-                    <input type="file" accept="image/*" onChange={handleImageUpload} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-2 text-foreground">Full Name</label>
-                  <input className="w-full bg-background border border-border text-foreground p-2 rounded" value={name} onChange={e => setName(e.target.value)} placeholder="Your Full Name"/>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-bold mb-2 text-foreground">Professional Title</label>
-                  <input className="w-full bg-background border border-border text-foreground p-2 rounded" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Senior React Developer"/>
-                </div>
-              </div>
+          <div className="pt-16 pb-8 px-8 flex flex-col md:flex-row justify-between items-end gap-6">
+            <div>
+              <h1 className="text-3xl font-black tracking-tight">{userData?.name}</h1>
+              <p className="text-indigo-600 font-bold text-lg">{userData?.title || "Potential Candidate"}</p>
               
-              {/* Contact Info */}
-              <div className="bg-muted p-4 rounded-lg border border-border">
-                <h3 className="font-bold text-foreground mb-4">Contact Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input placeholder="Phone" className="bg-background border border-border text-foreground p-2 rounded" value={contact.phone} onChange={e => setContact({...contact, phone: e.target.value})} />
-                  <input placeholder="Location Tags (e.g. Dhaka, Remote)" className="bg-background border border-border text-foreground p-2 rounded" value={contact.location} onChange={e => setContact({...contact, location: e.target.value})} />
-                  <input placeholder="LinkedIn URL" className="bg-background border border-border text-foreground p-2 rounded" value={contact.linkedin} onChange={e => setContact({...contact, linkedin: e.target.value})} />
-                  <input placeholder="GitHub URL" className="bg-background border border-border text-foreground p-2 rounded" value={contact.github} onChange={e => setContact({...contact, github: e.target.value})} />
-                  <input placeholder="Portfolio Website" className="bg-background border border-border text-foreground p-2 rounded md:col-span-2" value={contact.website} onChange={e => setContact({...contact, website: e.target.value})} />
-                </div>
+              <div className="flex flex-wrap gap-4 mt-4 text-sm text-muted-foreground font-medium">
+                {userData?.contact?.location?.length > 0 && (
+                  <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-red-400" /> {userData.contact.location.join(" • ")}</span>
+                )}
+                <span className="flex items-center gap-1.5"><GraduationCap className="w-4 h-4 text-indigo-500" /> {userData?.experience?.length || 0} Professional Roles</span>
               </div>
-
-              {/* Skills */}
-              <div>
-                <label className="block text-sm font-bold mb-2 text-foreground">Skills (Comma separated)</label>
-                <textarea className="w-full bg-background border border-border text-foreground p-2 rounded" value={skills} onChange={e => setSkills(e.target.value)} placeholder="React, Node.js, MongoDB, Python"/>
-              </div>
-
-              {/* Experience */}
-              <div>
-                <label className="block text-sm font-bold mb-2 text-foreground">Experience</label>
-                {experience.map((exp, i) => (
-                  <div key={i} className="border border-border p-4 mb-2 rounded bg-muted relative">
-                    <button onClick={() => removeExperience(i)} className="absolute top-2 right-2 text-destructive font-bold">×</button>
-                    <div className="grid grid-cols-2 gap-4 mb-2">
-                      <input placeholder="Company" className="bg-background border border-border text-foreground p-2" value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} />
-                      <input placeholder="Role" className="bg-background border border-border text-foreground p-2" value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} />
-                    </div>
-                    <div className="flex gap-4">
-                       <input type="number" placeholder="Years" className="bg-background border border-border text-foreground p-2 w-20" value={exp.years} onChange={e => updateExperience(i, 'years', e.target.value)} />
-                       <input placeholder="Description (Optional)" className="bg-background border border-border text-foreground p-2 flex-1" value={exp.description || ""} onChange={e => updateExperience(i, 'description', e.target.value)} />
-                    </div>
-                  </div>
-                ))}
-                <button onClick={addExperience} className="text-primary text-sm font-bold">+ Add Position</button>
-              </div>
-
-              {/* Certifications */}
-              <div>
-                <label className="block text-sm font-bold mb-2 text-foreground">Certifications & Awards</label>
-                {certifications.map((cert, i) => (
-                  <div key={i} className="border border-border p-4 mb-2 rounded bg-muted relative">
-                    <button onClick={() => removeCertification(i)} className="absolute top-2 right-2 text-destructive font-bold">×</button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-                      <input placeholder="Name (e.g. AWS Solutions Architect)" className="bg-background border border-border text-foreground p-2" value={cert.name} onChange={e => updateCertification(i, 'name', e.target.value)} />
-                      <input placeholder="Issuer (e.g. Amazon)" className="bg-background border border-border text-foreground p-2" value={cert.issuer} onChange={e => updateCertification(i, 'issuer', e.target.value)} />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                       <div className="flex flex-col">
-                         <label className="text-[10px] font-bold text-muted-foreground uppercase mb-1 ml-1">Type</label>
-                         <select className="bg-background border border-border text-foreground p-2 rounded" value={cert.type} onChange={e => updateCertification(i, 'type', e.target.value)}>
-                           <option value="Professional">Professional</option>
-                           <option value="Academic">Academic</option>
-                           <option value="Extracurricular">Extracurricular</option>
-                         </select>
-                       </div>
-                       <div className="flex flex-col">
-                         <label className="text-[10px] font-bold text-muted-foreground uppercase mb-1 ml-1">Issue Date</label>
-                         <input type="date" className="bg-background border border-border text-foreground p-2 rounded" value={cert.date ? new Date(cert.date).toISOString().split('T')[0] : ""} onChange={e => updateCertification(i, 'date', e.target.value)} />
-                       </div>
-                       <div className="flex flex-col">
-                         <label className="text-[10px] font-bold text-muted-foreground uppercase mb-1 ml-1">Verification URL</label>
-                         <input placeholder="https://..." className="bg-background border border-border text-foreground p-2 rounded" value={cert.url} onChange={e => updateCertification(i, 'url', e.target.value)} />
-                       </div>
-                    </div>
-                  </div>
-                ))}
-                <button onClick={addCertification} className="text-primary text-sm font-bold">+ Add Certification</button>
-              </div>
-
-              <button onClick={handleSave} className="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700">
-                Save Changes
+            </div>
+            <div className="flex gap-3 w-full md:w-auto">
+              <button 
+                onClick={() => router.push(`/users/${userData._id}`)}
+                className="flex-1 md:flex-none px-6 py-3 bg-slate-100 dark:bg-slate-800 text-foreground font-bold rounded-xl hover:bg-slate-200 transition-all text-sm"
+              >
+                Public CV
               </button>
+              <Link 
+                href="/profile/edit"
+                className="flex-1 md:flex-none px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 text-sm"
+              >
+                <Settings className="w-4 h-4" /> Edit Profile
+              </Link>
             </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="text-center border-b border-border pb-6">
-                <h2 className="text-2xl font-semibold text-foreground">{userData?.name}</h2>
-                <h3 className="text-lg text-primary font-medium mt-1">{userData?.title || "No Title Set"}</h3>
-                {userData?.contact?.location?.length > 0 && <p className="text-muted-foreground mt-1">{userData.contact.location.join(" • ")}</p>}
-                <div className="flex justify-center gap-4 mt-3">
-                  {userData?.contact?.linkedin && <a href={userData.contact.linkedin} target="_blank" className="text-blue-500 hover:underline">LinkedIn</a>}
-                  {userData?.contact?.github && <a href={userData.contact.github} target="_blank" className="text-foreground hover:underline">GitHub</a>}
-                  {userData?.contact?.website && <a href={userData.contact.website} target="_blank" className="text-primary hover:underline">Portfolio</a>}
-                  {userData?.contact?.phone && <span className="text-muted-foreground">{userData.contact.phone}</span>}
-                </div>
-                <div className="flex flex-wrap justify-center gap-2 mt-4">
-                  {userData?.skills?.map((skill: string, i: number) => <span key={i} className="bg-accent px-3 py-1 rounded-full text-sm text-accent-foreground">{skill}</span>)}
-                </div>
-              </div>
-              <div className="space-y-8">
-                {/* Experience */}
-                {userData?.experience?.length > 0 && (
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-4 border-l-4 border-primary pl-3">Experience</h3>
-                    <div className="space-y-6">
-                      {userData.experience.map((exp: any, i: number) => (
-                        <div key={i} className="flex">
-                          <div className="w-1 bg-border mr-4 relative"><div className="absolute top-0 -left-1.5 w-4 h-4 rounded-full bg-primary"></div></div>
-                          <div>
-                            <h4 className="font-bold text-lg text-foreground">{exp.role}</h4>
-                            <p className="text-muted-foreground">{exp.company}</p>
-                            <p className="text-sm text-muted-foreground">{exp.years} Years</p>
-                            {exp.description && <p className="text-muted-foreground mt-1">{exp.description}</p>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {/* Certifications */}
-                {userData?.certifications?.length > 0 && (
-                  <div>
-                     <h3 className="text-xl font-bold text-foreground mb-4 border-l-4 border-green-500 pl-3">Certifications & Activities</h3>
-                     <div className="space-y-4">
-                       {['Academic', 'Professional', 'Extracurricular'].map(type => {
-                         const certs = userData.certifications.filter((c: any) => (c.type || 'Professional') === type);
-                         if (certs.length === 0) return null;
-                         return (
-                           <div key={type} className="mb-4">
-                             <h4 className="font-bold text-muted-foreground text-sm uppercase tracking-wide mb-2">{type}</h4>
-                             <ul className="space-y-2">
-                               {certs.map((cert: any, i: number) => (
-                                 <li key={i} className="bg-muted p-3 rounded flex justify-between items-center border border-border">
-                                   <div>
-                                     <p className="font-bold text-foreground">{cert.name}</p>
-                                     <p className="text-sm text-muted-foreground">{cert.issuer}</p>
-                                   </div>
-                                   <div className="text-right">
-                                     {cert.date && <p className="text-xs text-muted-foreground">{new Date(cert.date).toLocaleDateString('en-GB')}</p>}
-                                     {cert.url && <a href={cert.url} target="_blank" className="text-primary text-xs hover:underline">Verify</a>}
-                                   </div>
-                                 </li>
-                               ))}
-                             </ul>
-                           </div>
-                         );
-                       })}
-                     </div>
-                  </div>
-                )}
-              </div>
-              <div className="mt-12 pt-8 border-t border-border text-center">
-                <h3 className="text-lg font-bold text-foreground mb-2">Employer Zone</h3>
-                <p className="text-muted-foreground mb-4 text-sm">Are you hiring? Manage your company profile and job listings.</p>
-                <button onClick={() => router.push('/company')} className="bg-primary text-primary-foreground px-6 py-2 rounded-full font-bold hover:opacity-90 transition shadow-lg">
-                  {userData?.companyId ? "Manage Company Dashboard" : "Create Company Profile"}
-                </button>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          
+          {/* LEFT: Experience & Certifications */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Skills */}
+            <div className="bg-white dark:bg-card border border-border rounded-3xl p-8 shadow-sm">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <div className="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
+                Skills & Expertise
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {userData?.skills?.length > 0 ? (
+                  userData.skills.map((skill: string, i: number) => (
+                    <span key={i} className="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-xl text-sm font-bold text-foreground hover:border-indigo-200 transition-colors">
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground italic text-sm">No skills added yet.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Experience */}
+            <div className="bg-white dark:bg-card border border-border rounded-3xl p-8 shadow-sm">
+              <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
+                <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+                Work History
+              </h3>
+              {userData?.experience?.length > 0 ? (
+                <div className="space-y-10 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+                  {userData.experience.map((exp: any, i: number) => (
+                    <div key={i} className="relative flex items-start gap-8 group">
+                      <div className="absolute left-0 mt-1.5 w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center group-hover:border-indigo-500 transition-colors z-10 shadow-sm">
+                        <Briefcase className="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                      </div>
+                      <div className="ml-14 flex-1 bg-slate-50/50 dark:bg-slate-800/30 p-6 rounded-2xl border border-transparent hover:border-border transition-all">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
+                          <h4 className="font-bold text-lg text-foreground">{exp.role}</h4>
+                          <span className="text-xs font-black uppercase text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1 rounded">{exp.years} Years</span>
+                        </div>
+                        <p className="text-indigo-600 font-bold text-sm mb-3">{exp.company}</p>
+                        {exp.description && <p className="text-muted-foreground text-sm leading-relaxed">{exp.description}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 border border-dashed border-border rounded-3xl">
+                   <p className="text-muted-foreground">No experience listed.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Certifications */}
+            <div className="bg-white dark:bg-card border border-border rounded-3xl p-8 shadow-sm">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <div className="w-1.5 h-6 bg-red-500 rounded-full"></div>
+                Certifications & Awards
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {userData?.certifications?.length > 0 ? (
+                  userData.certifications.map((cert: any, i: number) => (
+                    <div key={i} className="p-4 bg-slate-50 dark:bg-slate-800/50 border border-border rounded-2xl flex items-start gap-4">
+                       <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm border border-border flex-shrink-0">
+                          <Award className="w-5 h-5 text-amber-500" />
+                       </div>
+                       <div className="overflow-hidden">
+                          <p className="font-bold text-sm text-foreground truncate">{cert.name}</p>
+                          <p className="text-xs text-muted-foreground">{cert.issuer}</p>
+                          {cert.url && (
+                            <a href={cert.url} target="_blank" className="text-[10px] text-indigo-600 font-bold hover:underline flex items-center gap-1 mt-1">
+                              Verify <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
+                          )}
+                       </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="md:col-span-2 text-center py-12 text-muted-foreground italic">No certifications added.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Contact & Sidebar */}
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-card border border-border rounded-3xl p-8 shadow-sm sticky top-24">
+              <h3 className="text-lg font-bold mb-6 border-b border-border pb-4">Contact Details</h3>
+              <div className="space-y-6">
+                <ContactItem icon={Mail} label="Email Address" value={userData?.email} />
+                <ContactItem icon={Phone} label="Phone Number" value={userData?.contact?.phone || "Not provided"} />
+                <ContactItem icon={Linkedin} label="LinkedIn" value={userData?.contact?.linkedin} isLink />
+                <ContactItem icon={Github} label="GitHub" value={userData?.contact?.github} isLink />
+                <ContactItem icon={Globe} label="Portfolio" value={userData?.contact?.website} isLink />
+              </div>
+
+              <div className="mt-10 pt-8 border-t border-border">
+                <div className="bg-slate-50 dark:bg-slate-800/5 p-6 rounded-2xl text-center">
+                   <h4 className="font-bold mb-2">Employer Zone</h4>
+                   <p className="text-xs text-muted-foreground mb-4">Manage your company dashboard and job circulars.</p>
+                   <button 
+                    onClick={() => router.push('/company')}
+                    className="w-full py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 dark:shadow-none"
+                   >
+                     {userData?.companyId ? "Go to Dashboard" : "Register Company"}
+                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Helper Components
+function ContactItem({ icon: Icon, label, value, isLink }: { icon: any, label: string, value?: string, isLink?: boolean }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-4 group">
+      <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/20 transition-colors">
+        <Icon className="w-5 h-5 text-muted-foreground group-hover:text-indigo-600 transition-colors" />
+      </div>
+      <div className="overflow-hidden">
+        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">{label}</p>
+        {isLink ? (
+          <a href={value.startsWith('http') ? value : `https://${value}`} target="_blank" className="text-sm font-bold text-foreground hover:text-indigo-600 truncate block transition-colors underline decoration-border underline-offset-4 hover:decoration-indigo-600">
+            {value.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
+          </a>
+        ) : (
+          <p className="text-sm font-bold text-foreground truncate">{value}</p>
+        )}
       </div>
     </div>
   );
