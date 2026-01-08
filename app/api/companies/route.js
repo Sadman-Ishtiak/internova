@@ -10,6 +10,10 @@ export async function GET(req) {
   const industry = searchParams.get('industry');
   const location = searchParams.get('location'); // 'remote', 'local', or city name
   const hiring = searchParams.get('hiring'); // 'internship', 'job', or 'any'
+  const verified = searchParams.get('verified');
+  const featured = searchParams.get('featured');
+  const size = searchParams.get('size');
+  const type = searchParams.get('type');
 
   let query = { status: 'active' };
 
@@ -19,6 +23,22 @@ export async function GET(req) {
 
   if (industry && industry !== 'all') {
     query.industry = industry;
+  }
+
+  if (verified === 'true') {
+    query.verified = true;
+  }
+
+  if (featured === 'true') {
+    query.featured = true;
+  }
+
+  if (size && size !== 'all') {
+    query.companySize = size;
+  }
+
+  if (type && type !== 'all') {
+    query.companyType = type;
   }
 
   if (location && location !== 'all') {

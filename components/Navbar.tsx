@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { 
   Briefcase, 
@@ -15,11 +16,14 @@ import {
   X,
   LogIn,
   UserPlus,
-  ShieldAlert
+  ShieldAlert,
+  Users,
+  ChevronRight
 } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
   const [isProfileOpen, setIsProfileOpen] = useState(false); // Profile dropdown
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,18 +65,9 @@ export default function Navbar() {
           {/* CENTER: Tiled Navigation (Desktop) */}
           <div className="hidden md:flex items-center justify-center flex-1 mx-6">
             <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-full border border-border/50">
-               {/* Always show Companies/Jobs even if logged out? Original code showed Browse Jobs only if logged in, but Companies always. Let's make it consistent. */}
-               {!session ? (
-                 <>
-                   <NavLink href="/companies" icon={Building2} label="Companies" />
-                   <NavLink href="/login" icon={LogIn} label="Login" />
-                 </>
-               ) : (
-                 <>
-                   <NavLink href="/jobs" icon={Briefcase} label="Jobs" />
-                   <NavLink href="/companies" icon={Building2} label="Companies" />
-                 </>
-               )}
+               <NavLink href="/jobs" icon={Briefcase} label="Jobs" active={pathname.startsWith("/jobs")} />
+               <NavLink href="/companies" icon={Building2} label="Companies" active={pathname.startsWith("/companies")} />
+               <NavLink href="/people" icon={Users} label="People" active={pathname.startsWith("/people")} />
             </div>
           </div>
 
@@ -81,13 +76,21 @@ export default function Navbar() {
             <ThemeToggle />
             
             {!session ? (
-               <Link 
-                 href="/register" 
-                 className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-all shadow-sm hover:shadow-md"
-               >
-                 <UserPlus className="w-4 h-4" />
-                 Register
-               </Link>
+               <div className="flex items-center gap-2">
+                 <Link 
+                   href="/login" 
+                   className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-4 py-2"
+                 >
+                   Login
+                 </Link>
+                 <Link 
+                   href="/register" 
+                   className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-all shadow-sm hover:shadow-md"
+                 >
+                   <UserPlus className="w-4 h-4" />
+                   Register
+                 </Link>
+               </div>
             ) : (
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -158,7 +161,9 @@ export default function Navbar() {
               <>
                 <MobileNavLink href="/login" icon={LogIn} label="Login" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/register" icon={UserPlus} label="Register" onClick={() => setIsOpen(false)} active />
+                <MobileNavLink href="/jobs" icon={Briefcase} label="Browse Jobs" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/companies" icon={Building2} label="Explore Companies" onClick={() => setIsOpen(false)} />
+                <MobileNavLink href="/people" icon={Users} label="People" onClick={() => setIsOpen(false)} />
               </>
             ) : (
               <>
@@ -177,6 +182,7 @@ export default function Navbar() {
                 <MobileNavLink href="/profile" icon={User} label="My Profile" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/jobs" icon={Briefcase} label="Browse Jobs" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/companies" icon={Building2} label="Companies" onClick={() => setIsOpen(false)} />
+                <MobileNavLink href="/people" icon={Users} label="People" onClick={() => setIsOpen(false)} />
                 
                 {session.user?.companyId && (
                   <MobileNavLink href="/company" icon={LayoutDashboard} label="Company Dashboard" onClick={() => setIsOpen(false)} />
@@ -207,11 +213,23 @@ export default function Navbar() {
 
 // Helper Components
 
-function NavLink({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
+function NavLink({ href, icon: Icon, label, active }: { href: string; icon: any; label: string; active?: boolean }) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (active) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("refresh-data"));
+    }
+  };
+
   return (
     <Link 
       href={href} 
-      className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-background transition-all hover:shadow-sm"
+      onClick={handleClick}
+      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:shadow-sm active:scale-95 ${
+        active 
+          ? "bg-primary text-primary-foreground shadow-md scale-105" 
+          : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+      }`}
     >
       <Icon className="w-4 h-4" />
       {label}
@@ -219,12 +237,24 @@ function NavLink({ href, icon: Icon, label }: { href: string; icon: any; label: 
   );
 }
 
-function DropdownItem({ href, icon: Icon, label, onClick, className }: { href: string; icon: any; label: string; onClick: () => void; className?: string }) {
+function DropdownItem({ href, icon: Icon, label, onClick, className, active }: { href: string; icon: any; label: string; onClick: () => void; className?: string; active?: boolean }) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (active) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("refresh-data"));
+    }
+    onClick();
+  };
+
   return (
     <Link 
       href={href} 
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors ${className}`}
-      onClick={onClick}
+      onClick={handleClick}
+      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+        active 
+          ? "bg-primary/10 text-primary border-l-4 border-primary" 
+          : "text-muted-foreground hover:text-foreground hover:bg-accent"
+      } ${className}`}
     >
       <Icon className="w-4 h-4" />
       {label}
@@ -233,15 +263,23 @@ function DropdownItem({ href, icon: Icon, label, onClick, className }: { href: s
 }
 
 function MobileNavLink({ href, icon: Icon, label, onClick, active, className }: { href: string; icon: any; label: string; onClick: () => void; active?: boolean; className?: string }) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (active) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("refresh-data"));
+    }
+    onClick();
+  };
+
   return (
     <Link 
       href={href} 
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+      onClick={handleClick}
+      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-bold transition-all active:scale-[0.98] ${
         active 
-          ? "bg-primary text-primary-foreground shadow-md" 
-          : "text-muted-foreground hover:text-foreground hover:bg-accent"
+          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-[1.02]" 
+          : "text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent"
       } ${className}`}
-      onClick={onClick}
     >
       <Icon className="w-5 h-5" />
       {label}

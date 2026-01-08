@@ -1,0 +1,54 @@
+@@include("partials/main.html")
+
+    <head>
+        
+        @@include("partials/title-meta.html", {"title": "Starter Page"})
+
+        <!-- Choise Css -->
+        <link rel="stylesheet" href="assets/libs/choices.js/public/assets/styles/choices.min.css">
+
+        @@include("partials/head-css.html")
+
+    </head>
+
+    @@include("partials/body.html")
+
+        <!-- Begin page -->
+        <div>
+
+            @@include("partials/topbar.html")
+
+            
+            <div class="main-content">
+
+                <div class="page-content">
+
+                    @@include("partials/page-title.html",{"pagetitle":"Company","title":"About Us"})
+
+
+
+                </div>
+                <!-- End Page-content -->
+
+                @@include("partials/footer.html")
+
+                @@include("partials/switcher.html")
+            </div>
+            <!-- end main content-->
+
+        </div>
+        <!-- END layout-wrapper -->
+
+        @@include("partials/vendor-scripts.html")
+
+        <!-- Choice Js -->
+        <script src="assets/libs/choices.js/public/assets/scripts/choices.min.js"></script>
+
+        <!-- Switcher Js -->
+        <script src="assets/js/pages/switcher.init.js"></script>
+
+
+        <script src="assets/js/app.js"></script>
+
+    </body>
+</html>

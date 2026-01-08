@@ -28,7 +28,7 @@ export async function POST(req) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { name, description, imageUrl, contact } = await req.json();
+    const data = await req.json();
     await dbConnect();
 
     // Check if user is already in a company
@@ -39,10 +39,7 @@ export async function POST(req) {
 
     // 1. Create Company
     const newCompany = await Company.create({
-      name,
-      description,
-      imageUrl,
-      contact,
+      ...data,
       ownerId: user._id,
       managers: [],
       status: 'active'
@@ -65,22 +62,30 @@ export async function PUT(req) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { name, description, imageUrl, status, contact } = await req.json();
+    const updateData = await req.json();
     await dbConnect();
 
-    // Find company where user is owner
-    const company = await Company.findOne({ ownerId: session.user.id });
+    // Find company where user is owner or manager
+    const company = await Company.findOne({ 
+      $or: [{ ownerId: session.user.id }, { managers: session.user.id }]
+    });
 
     if (!company) {
       return NextResponse.json({ error: "Company not found or unauthorized" }, { status: 404 });
     }
 
-    // Update fields
-    if (name) company.name = name;
-    if (description) company.description = description;
-    if (imageUrl) company.imageUrl = imageUrl;
-    if (status) company.status = status;
-    if (contact) company.contact = contact;
+    // Update fields dynamically
+    const allowedUpdates = [
+      'name', 'tagline', 'description', 'imageUrl', 'industry', 
+      'companySize', 'companyType', 'foundedYear', 'specialties', 
+      'contact', 'socialMedia', 'benefits', 'status'
+    ];
+
+    allowedUpdates.forEach(field => {
+      if (updateData[field] !== undefined) {
+        company[field] = updateData[field];
+      }
+    });
 
     await company.save();
 

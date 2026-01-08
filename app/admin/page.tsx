@@ -60,7 +60,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link href="/admin/users" className="block bg-card p-8 rounded-lg shadow-md hover:shadow-lg transition border border-border group">
             <h2 className="text-2xl font-bold text-foreground group-hover:text-primary mb-2">Manage Users</h2>
             <p className="text-muted-foreground">View, ban, or delete user accounts.</p>
@@ -69,6 +69,11 @@ export default function AdminDashboard() {
           <Link href="/admin/jobs" className="block bg-card p-8 rounded-lg shadow-md hover:shadow-lg transition border border-border group">
             <h2 className="text-2xl font-bold text-foreground group-hover:text-primary mb-2">Manage Jobs</h2>
             <p className="text-muted-foreground">View and remove job listings.</p>
+          </Link>
+
+          <Link href="/admin/companies" className="block bg-card p-8 rounded-lg shadow-md hover:shadow-lg transition border border-border group">
+            <h2 className="text-2xl font-bold text-foreground group-hover:text-primary mb-2">Manage Companies</h2>
+            <p className="text-muted-foreground">Verify, feature, or remove company profiles.</p>
           </Link>
         </div>
 

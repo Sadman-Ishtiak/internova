@@ -1,13 +1,27 @@
 "use client";
 
-import Countdown from "@/components/Countdown";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import Image from "next/image";
+import { 
+  Search, 
+  MapPin, 
+  Briefcase, 
+  Clock, 
+  DollarSign, 
+  ChevronRight,
+  Filter,
+  LayoutGrid,
+  List
+} from "lucide-react";
+import Countdown from "@/components/Countdown";
 
 export default function JobsPage() {
   const { data: session } = useSession();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,7 +33,15 @@ export default function JobsPage() {
       fetchJobs();
     }, 500);
 
-    return () => clearTimeout(delayDebounceFn);
+    const handleRefresh = () => {
+      fetchJobs();
+    };
+
+    window.addEventListener("refresh-data", handleRefresh);
+    return () => {
+      clearTimeout(delayDebounceFn);
+      window.removeEventListener("refresh-data", handleRefresh);
+    };
   }, [searchTerm, typeFilter]);
 
   const fetchJobs = async () => {
@@ -58,96 +80,275 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Browse Opportunities</h1>
-
-        {/* Search & Filter Bar */}
-        <div className="bg-card p-4 rounded shadow mb-8 flex flex-col md:flex-row gap-4 border border-border">
-          <input 
-            type="text" 
-            placeholder="Search by title or skill..." 
-            className="flex-1 bg-background border border-border text-foreground p-2 rounded focus:ring-2 focus:ring-primary focus:outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select 
-            className="bg-background border border-border text-foreground p-2 rounded w-full md:w-48 focus:ring-2 focus:ring-primary focus:outline-none"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-          >
-            <option value="all">All Types</option>
-            <option value="job">Jobs Only</option>
-            <option value="internship">Internships Only</option>
-          </select>
+    <div className="min-h-screen bg-background">
+      
+      {/* PAGE HEADER */}
+      <section className="bg-slate-900 py-16 text-white relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Job List</h1>
+            </div>
+          </div>
         </div>
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
+      </section>
 
-        {/* Job Grid */}
-        {loading ? (
-          <p className="text-center">Loading...</p>
-        ) : jobs.length === 0 ? (
-          <p className="text-center text-muted-foreground">No opportunities found matching your criteria.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs.map((job) => (
-              <div 
-                key={job._id} 
-                className="bg-card border border-border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition flex flex-col"
-              >
-                {/* Image */}
-                <div 
-                  className="h-48 bg-muted relative cursor-pointer"
-                  onClick={() => window.location.href = `/jobs/${job._id}`}
-                >
-                  <img 
-                    src={job.imageUrl} 
-                    alt={job.title} 
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <Countdown deadline={job.deadline} />
-                  </div>
+      {/* SEARCH & FILTERS SECTION */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          
+          <div className="grid lg:grid-cols-4 gap-8">
+            
+            {/* SIDEBAR FILTERS */}
+            <div className="lg:col-span-1 space-y-6">
+              <div className="bg-card border border-border rounded-xl p-6 sticky top-24">
+                <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
+                  <Filter className="w-5 h-5 text-indigo-600" />
+                  <h2 className="font-bold text-lg">Filters</h2>
                 </div>
 
-                {/* Content */}
-                <div className="p-4 flex-grow flex flex-col">
-                  <h3 
-                    className="text-xl font-bold text-foreground hover:text-primary cursor-pointer"
-                    onClick={() => window.location.href = `/jobs/${job._id}`}
-                  >
-                    {job.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-3">{job.companyId?.name || "Unknown Company"}</p>
-                  
-                  {job.salary?.min && (
-                    <div className="text-sm font-semibold text-green-600 mb-2">
-                      ${job.salary.min} - ${job.salary.max} {job.salary.currency} / {job.salary.period}
+                <div className="space-y-6">
+                  {/* Search */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Keywords</label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <input 
+                        type="text" 
+                        placeholder="Job, company..." 
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
                     </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {job.requiredSkills.slice(0, 3).map((skill: string, i: number) => (
-                      <span key={i} className="text-xs bg-accent px-2 py-1 rounded text-accent-foreground">
-                        {skill}
-                      </span>
-                    ))}
-                    {job.requiredSkills.length > 3 && <span className="text-xs text-muted-foreground">+{job.requiredSkills.length - 3} more</span>}
                   </div>
 
-                  <div className="mt-auto">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); handleApply(job._id); }}
-                      className="w-full bg-primary text-primary-foreground py-2 rounded font-medium hover:opacity-90 transition"
-                    >
-                      Apply Now
-                    </button>
+                  {/* Job Type */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Job Type</label>
+                    <div className="space-y-2">
+                      {[
+                        { id: 'all', label: 'All Types' },
+                        { id: 'job', label: 'Full Time' },
+                        { id: 'internship', label: 'Internship' }
+                      ].map((type) => (
+                        <label key={type.id} className="flex items-center gap-3 cursor-pointer group">
+                          <input 
+                            type="radio" 
+                            name="type" 
+                            checked={typeFilter === type.id}
+                            onChange={() => setTypeFilter(type.id)}
+                            className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-border" 
+                          />
+                          <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{type.label}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Location (Static Placeholder for UI) */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Location</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <select className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all appearance-none text-muted-foreground">
+                        <option>All Locations</option>
+                        <option>Dhaka</option>
+                        <option>Chattogram</option>
+                        <option>Sylhet</option>
+                        <option>Rajshahi</option>
+                        <option>Khulna</option>
+                        <option>Remote</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => { setSearchTerm(""); setTypeFilter("all"); }}
+                    className="w-full py-2 text-indigo-600 text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* JOB LISTINGS */}
+            <div className="lg:col-span-3">
+              
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-muted-foreground text-sm">
+                  Showing <span className="text-foreground font-semibold">{jobs.length}</span> results
+                </p>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-indigo-600 text-white shadow-md" : "bg-white dark:bg-slate-800 text-muted-foreground border border-border hover:text-foreground"}`}
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-indigo-600 text-white shadow-md" : "bg-white dark:bg-slate-800 text-muted-foreground border border-border hover:text-foreground"}`}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "space-y-4"}>
+                {loading ? (
+                   <div className={viewMode === "grid" ? "contents" : "flex flex-col gap-4"}>
+                      {[1,2,3,4].map(i => (
+                        <div key={i} className={`bg-slate-100 dark:bg-slate-800 animate-pulse rounded-xl ${viewMode === "grid" ? "h-64" : "h-32"}`}></div>
+                      ))}
+                   </div>
+                ) : jobs.length === 0 ? (
+                  <div className={viewMode === "grid" ? "md:col-span-2 text-center py-20 bg-card rounded-xl border border-dashed border-border" : "text-center py-20 bg-card rounded-xl border border-dashed border-border"}>
+                    <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
+                    <p className="text-muted-foreground">No opportunities found matching your criteria.</p>
+                  </div>
+                ) : (
+                  jobs.map((job) => (
+                    viewMode === "list" ? (
+                      <div key={job._id} className="group bg-card border border-border rounded-xl p-5 hover:shadow-xl transition-all hover:border-indigo-200">
+                        <div className="flex flex-col md:flex-row items-center gap-6">
+                          
+                          {/* Company Logo */}
+                          <div 
+                            className="w-20 h-20 relative rounded-xl overflow-hidden bg-slate-50 flex-shrink-0 border border-border cursor-pointer"
+                            onClick={() => window.location.href = `/jobs/${job._id}`}
+                          >
+                            <Image 
+                              src={job.imageUrl || "/assets/images/featured-job/img-01.png"} 
+                              alt="Company" 
+                              fill 
+                              className="object-cover"
+                            />
+                          </div>
+
+                          {/* Job Details */}
+                          <div className="flex-1 text-center md:text-left">
+                            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-1">
+                              <h3 className="text-xl font-bold group-hover:text-indigo-600 transition-colors">
+                                <Link href={`/jobs/${job._id}`}>{job.title}</Link>
+                              </h3>
+                              <span className="hidden md:inline text-slate-300">|</span>
+                              <div className="flex items-center gap-1.5 justify-center md:justify-start">
+                                <span className="text-muted-foreground text-sm">{job.companyId?.name || "Internova Company"}</span>
+                                {job.companyId?.verified && (
+                                  <ShieldCheck className="w-3.5 h-3.5 text-green-500 fill-green-50" />
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-muted-foreground mt-3">
+                              <span className="flex items-center gap-1.5">
+                                <MapPin className="w-4 h-4 text-indigo-500" /> {job.location || "Remote"}
+                              </span>
+                              <span className="flex items-center gap-1.5">
+                                <DollarSign className="w-4 h-4 text-green-500" /> 
+                                {job.salary?.min ? `${job.salary.min} - ${job.salary.max}` : "Competitive"}
+                              </span>
+                              <span className="flex items-center gap-1.5">
+                                <Clock className="w-4 h-4 text-orange-500" /> 
+                                <Countdown deadline={job.deadline} />
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tags & Action */}
+                          <div className="flex flex-row md:flex-col items-center md:items-end gap-3 min-w-[140px] w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 mt-2 md:mt-0">
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                              job.type === 'internship' 
+                                ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30' 
+                                : 'bg-green-100 text-green-600 dark:bg-green-900/30'
+                            }`}>
+                              {job.type === 'internship' ? 'Internship' : 'Full Time'}
+                            </span>
+                            <button 
+                               onClick={(e) => { e.stopPropagation(); handleApply(job._id); }}
+                               className="flex-1 md:flex-none px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 dark:shadow-none"
+                            >
+                              Apply Now
+                            </button>
+                          </div>
+
+                        </div>
+                      </div>
+                    ) : (
+                      <div key={job._id} className="group bg-card border border-border rounded-2xl p-6 hover:shadow-2xl transition-all hover:border-indigo-300 flex flex-col">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="w-14 h-14 relative rounded-xl overflow-hidden border border-border bg-slate-50">
+                            <Image 
+                              src={job.imageUrl || "/assets/images/featured-job/img-01.png"} 
+                              alt="Company" 
+                              fill 
+                              className="object-cover"
+                            />
+                          </div>
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                            job.type === 'internship' 
+                              ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30' 
+                              : 'bg-green-100 text-green-600 dark:bg-green-900/30'
+                          }`}>
+                            {job.type === 'internship' ? 'Internship' : 'Job'}
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                          <Link href={`/jobs/${job._id}`}>{job.title}</Link>
+                        </h3>
+                        <p className="text-muted-foreground text-sm mb-4">{job.companyId?.name || "Internova Company"}</p>
+
+                        <div className="space-y-2 mb-6 flex-grow">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <MapPin className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                            <span className="truncate">{job.location || "Remote"}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <DollarSign className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            <span>{job.salary?.min ? `${job.salary.min} - ${job.salary.max}` : "Competitive"}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+                            <Clock className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                            <Countdown deadline={job.deadline} />
+                          </div>
+                        </div>
+
+                        <button 
+                          onClick={() => handleApply(job._id)}
+                          className="w-full py-3 bg-slate-50 dark:bg-slate-800 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white text-sm font-bold rounded-xl transition-all border border-indigo-100 dark:border-indigo-900/30 group-hover:border-indigo-600 shadow-sm"
+                        >
+                          Apply For Job
+                        </button>
+                      </div>
+                    )
+                  ))
+                )}
+              </div>
+
+              {/* PAGINATION PLACEHOLDER */}
+              {!loading && jobs.length > 0 && (
+                <div className="flex justify-center mt-12">
+                   <nav className="flex items-center gap-2">
+                      <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-indigo-600 hover:text-white transition-all disabled:opacity-50" disabled>&laquo;</button>
+                      <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-600 text-white font-bold shadow-md">1</button>
+                      <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-indigo-600 hover:text-white transition-all">2</button>
+                      <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-indigo-600 hover:text-white transition-all">3</button>
+                      <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-indigo-600 hover:text-white transition-all">&raquo;</button>
+                   </nav>
+                </div>
+              )}
+
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      </section>
+
     </div>
   );
 }

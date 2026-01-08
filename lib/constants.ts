@@ -25,7 +25,7 @@ export type SalaryPeriod = typeof SALARY_PERIODS[keyof typeof SALARY_PERIODS];
 
 // Currency Options
 export const CURRENCIES = [
-  'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR', 'AED'
+  'BDT', 'USD', 'EUR', 'GBP', 'INR', 'AED'
 ] as const;
 
 export type Currency = typeof CURRENCIES[number];
@@ -34,6 +34,8 @@ export type Currency = typeof CURRENCIES[number];
 export const INDUSTRIES = [
   'Technology',
   'Finance',
+  'Textiles & Garments',
+  'Telecommunications',
   'Healthcare',
   'Education',
   'Marketing',

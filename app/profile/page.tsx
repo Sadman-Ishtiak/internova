@@ -182,7 +182,7 @@ export default function ProfilePage() {
                 <h3 className="font-bold text-foreground mb-4">Contact Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input placeholder="Phone" className="bg-background border border-border text-foreground p-2 rounded" value={contact.phone} onChange={e => setContact({...contact, phone: e.target.value})} />
-                  <input placeholder="Location Tags (e.g. London, Remote)" className="bg-background border border-border text-foreground p-2 rounded" value={contact.location} onChange={e => setContact({...contact, location: e.target.value})} />
+                  <input placeholder="Location Tags (e.g. Dhaka, Remote)" className="bg-background border border-border text-foreground p-2 rounded" value={contact.location} onChange={e => setContact({...contact, location: e.target.value})} />
                   <input placeholder="LinkedIn URL" className="bg-background border border-border text-foreground p-2 rounded" value={contact.linkedin} onChange={e => setContact({...contact, linkedin: e.target.value})} />
                   <input placeholder="GitHub URL" className="bg-background border border-border text-foreground p-2 rounded" value={contact.github} onChange={e => setContact({...contact, github: e.target.value})} />
                   <input placeholder="Portfolio Website" className="bg-background border border-border text-foreground p-2 rounded md:col-span-2" value={contact.website} onChange={e => setContact({...contact, website: e.target.value})} />

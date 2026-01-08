@@ -3,6 +3,25 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { 
+  Building2, 
+  Briefcase, 
+  Plus, 
+  Pencil, 
+  Trash2, 
+  Users, 
+  Clock, 
+  MapPin, 
+  DollarSign,
+  ChevronRight,
+  LayoutDashboard,
+  Settings,
+  Globe,
+  Mail,
+  Phone
+} from "lucide-react";
 
 export default function CompanyDashboard() {
   const { data: session, status } = useSession();
@@ -14,24 +33,18 @@ export default function CompanyDashboard() {
 
   // Forms
   const [newCompany, setNewCompany] = useState({ 
-    name: "", description: "", imageUrl: "", industry: "Tech",
-    contact: { website: "", linkedin: "", email: "", phone: "", location: "" }
+    name: "", tagline: "", description: "", imageUrl: "", industry: "Technology",
+    companySize: "1-10", companyType: "Privately Held", foundedYear: new Date().getFullYear(),
+    contact: { website: "", linkedin: "", email: "", phone: "", location: "" },
+    socialMedia: { facebook: "", twitter: "", instagram: "", youtube: "" }
   });
   const [editCompanyForm, setEditCompanyForm] = useState<any>({ 
-    name: "", description: "", imageUrl: "", status: "", industry: "Tech",
-    contact: { website: "", linkedin: "", email: "", phone: "", location: "" }
+    name: "", tagline: "", description: "", imageUrl: "", status: "", industry: "Technology",
+    companySize: "1-10", companyType: "Privately Held", foundedYear: new Date().getFullYear(),
+    contact: { website: "", linkedin: "", email: "", phone: "", location: "" },
+    socialMedia: { facebook: "", twitter: "", instagram: "", youtube: "" }
   });
-  const [jobForm, setJobForm] = useState({
-    title: "",
-    type: "job",
-    imageUrl: "",
-    requiredSkills: "",
-    deadline: "",
-    salary: { min: "", max: "", currency: "USD", period: "annually" }
-  });
-  const [isPostingJob, setIsPostingJob] = useState(false);
   const [isEditingCompany, setIsEditingCompany] = useState(false);
-  const [editingJobId, setEditingJobId] = useState<string | null>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldSetter: (url: string) => void) => {
     const file = e.target.files?.[0]; if (!file) return;
@@ -56,11 +69,16 @@ export default function CompanyDashboard() {
         setCompany(data.company);
         setEditCompanyForm({
           name: data.company.name,
-          description: data.company.description,
-          imageUrl: data.company.imageUrl,
-          status: data.company.status,
-          industry: data.company.industry || "Tech",
-          contact: data.company.contact || {}
+          tagline: data.company.tagline || "",
+          description: data.company.description || "",
+          imageUrl: data.company.imageUrl || "",
+          status: data.company.status || "active",
+          industry: data.company.industry || "Technology",
+          companySize: data.company.companySize || "1-10",
+          companyType: data.company.companyType || "Privately Held",
+          foundedYear: data.company.foundedYear || new Date().getFullYear(),
+          contact: data.company.contact || { website: "", linkedin: "", email: "", phone: "", location: "" },
+          socialMedia: data.company.socialMedia || { facebook: "", twitter: "", instagram: "", youtube: "" }
         });
         fetchMyJobs(data.company._id);
       }
@@ -100,51 +118,6 @@ export default function CompanyDashboard() {
       else alert(data.error);
     } catch (error) { console.error("Error updating company:", error); }
   };
-
-  const handlePostOrUpdateJob = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const skillsArray = typeof jobForm.requiredSkills === 'string' ? jobForm.requiredSkills.split(",").map(s => s.trim()).filter(s => s) : jobForm.requiredSkills;
-      
-      // Validate deadline is in the future
-      if (new Date(jobForm.deadline) <= new Date()) {
-        alert("Deadline must be in the future");
-        return;
-      }
-
-      // Validate title
-      if (!jobForm.title.trim()) {
-        alert("Job title is required");
-        return;
-      }
-
-      // Validate skills
-      if (skillsArray.length === 0) {
-        alert("At least one skill is required");
-        return;
-      }
-
-      const method = editingJobId ? "PUT" : "POST";
-      const body = {
-        ...jobForm,
-        requiredSkills: skillsArray,
-        salary: {
-          ...jobForm.salary,
-          min: jobForm.salary.min ? parseInt(jobForm.salary.min) : null,
-          max: jobForm.salary.max ? parseInt(jobForm.salary.max) : null
-        },
-        jobId: editingJobId ? editingJobId : undefined
-      };
-      const res = await fetch("/api/jobs", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      const data = await res.json();
-      if (res.ok) {
-        alert(editingJobId ? "Job updated!" : "Job posted!");
-        setIsPostingJob(false); setEditingJobId(null);
-        setJobForm({ title: "", type: "job", imageUrl: "", requiredSkills: "", deadline: "", salary: { min: "", max: "", currency: "USD", period: "annually" }});
-        if (company) fetchMyJobs(company._id);
-      } else alert(data.error || "Failed to save job");
-    } catch (error) { console.error("Error saving job:", error); alert("Error saving job"); }
-  };
   
   const handleDeleteJob = async (jobId: string) => {
     if(!confirm("Are you sure?")) return;
@@ -154,258 +127,312 @@ export default function CompanyDashboard() {
     } catch (error) { console.error("Error deleting job:", error); }
   };
 
-  const startEditJob = (job: any) => {
-    setJobForm({
-      title: job.title,
-      type: job.type || "job",
-      imageUrl: job.imageUrl,
-      requiredSkills: job.requiredSkills.join(", "),
-      deadline: job.deadline ? new Date(job.deadline).toISOString().slice(0, 16) : "",
-      salary: job.salary || { min: "", max: "", currency: "USD", period: "annually" }
-    });
-    setEditingJobId(job._id);
-    setIsPostingJob(true);
-  };
-  
-  const resetJobForm = () => {
-    setJobForm({ title: "", type: "job", imageUrl: "", requiredSkills: "", deadline: "", salary: { min: "", max: "", currency: "USD", period: "annually" } });
-    setEditingJobId(null);
-  }
-
-  if (status === "loading" || loading) return <div className="p-8 text-center">Loading...</div>;
+  if (status === "loading" || loading) return <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+  </div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
-      {!company ? (
-        <div className="bg-card p-8 rounded shadow-md border border-border">
-           <h2 className="text-2xl font-bold mb-4">Register Your Company</h2>
-           <form onSubmit={handleCreateCompany} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-               <input placeholder="Company Name" className="bg-background border border-border text-foreground p-2 rounded" value={newCompany.name} onChange={e => setNewCompany({...newCompany, name: e.target.value})} required />
-               <input placeholder="Image URL (or use upload)" className="bg-background border border-border text-foreground p-2 rounded" value={newCompany.imageUrl} onChange={e => setNewCompany({...newCompany, imageUrl: e.target.value})} />
-               <input type="file" onChange={e => handleImageUpload(e, (url) => setNewCompany({...newCompany, imageUrl: url}))} />
-            </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      
+      {/* PAGE HEADER */}
+      <section className="bg-slate-900 py-12 text-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Industry</label>
-              <select
-                required
-                className="w-full bg-background border border-border text-foreground p-2 rounded"
-                value={newCompany.industry}
-                onChange={(e) => setNewCompany({ ...newCompany, industry: e.target.value })}
-              >
-                <option value="Tech">Technology</option>
-                <option value="Finance">Finance & Banking</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Education">Education</option>
-                <option value="Marketing">Marketing & Media</option>
-                <option value="Service">Service & Hospitality</option>
-                <option value="Other">Other</option>
-              </select>
+              <h1 className="text-3xl font-bold mb-2">Company Dashboard</h1>
             </div>
-             <textarea placeholder="Description" className="w-full bg-background border border-border text-foreground p-2 rounded" value={newCompany.description} onChange={e => setNewCompany({...newCompany, description: e.target.value})} required />
-             <button type="submit" className="bg-primary text-primary-foreground px-4 py-2 rounded hover:opacity-90">Register Company</button>
-           </form>
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {/* Company Info */}
-          {!isEditingCompany ? (
-              <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-                <img 
-                  src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
-                  alt="Logo" 
-                  className="w-24 h-24 rounded object-cover border"
-                />
-                <div className="flex-1 w-full">
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div>
-                      <h1 className="text-3xl font-bold text-foreground">{company.name}</h1>
-                      <p className="text-muted-foreground">{company.industry}</p>
-                    </div>
-                    <button onClick={() => setIsEditingCompany(true)} className="text-primary hover:underline">Edit Company</button>
-                  </div>
-                  <p className="mt-2 text-muted-foreground">{company.description}</p>
-                </div>
+            {company && (
+              <div className="flex gap-3">
+                 <Link 
+                  href="/company/post-job" 
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  <Plus className="w-4 h-4" /> Post New Circular
+                </Link>
               </div>
-          ) : (
-              <form onSubmit={handleUpdateCompany} className="space-y-4 bg-muted p-4 rounded border border-border">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Company Name</label>
-                    <input
-                      type="text"
-                      className="w-full bg-background border border-border text-foreground p-2 rounded"
-                      value={editCompanyForm.name}
-                      onChange={(e) => setEditCompanyForm({ ...editCompanyForm, name: e.target.value })}
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-8">
+        {!company ? (
+          /* REGISTRATION FORM */
+          <div className="max-w-2xl mx-auto bg-white dark:bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-indigo-600 p-6 text-white text-center">
+              <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <h2 className="text-2xl font-bold">Register Your Company</h2>
+              <p className="text-indigo-100 mt-1">Start recruiting the best talent today.</p>
+            </div>
+            <form onSubmit={handleCreateCompany} className="p-8 space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                 <div className="space-y-2">
+                    <label className="text-sm font-bold text-foreground">Company Name</label>
+                    <input 
+                      placeholder="e.g. Acme Corp" 
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-border text-foreground p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                      value={newCompany.name} 
+                      onChange={e => setNewCompany({...newCompany, name: e.target.value})} 
+                      required 
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Industry</label>
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-sm font-bold text-foreground">Tagline</label>
+                    <input 
+                      placeholder="Short catchy tagline" 
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-border text-foreground p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                      value={newCompany.tagline} 
+                      onChange={e => setNewCompany({...newCompany, tagline: e.target.value})} 
+                    />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-sm font-bold text-foreground">Industry</label>
                     <select
-                      className="w-full bg-background border border-border text-foreground p-2 rounded"
-                      value={editCompanyForm.industry}
-                      onChange={(e) => setEditCompanyForm({ ...editCompanyForm, industry: e.target.value })}
+                      required
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-border text-foreground p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                      value={newCompany.industry}
+                      onChange={(e) => setNewCompany({ ...newCompany, industry: e.target.value })}
                     >
-                      <option value="Tech">Technology</option>
+                      <option value="Technology">Technology</option>
                       <option value="Finance">Finance & Banking</option>
+                      <option value="Textiles & Garments">Textiles & Garments</option>
+                      <option value="Telecommunications">Telecommunications</option>
                       <option value="Healthcare">Healthcare</option>
                       <option value="Education">Education</option>
                       <option value="Marketing">Marketing & Media</option>
                       <option value="Service">Service & Hospitality</option>
                       <option value="Other">Other</option>
                     </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Status</label>
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-sm font-bold text-foreground">Company Size</label>
                     <select
-                      className="w-full bg-background border border-border text-foreground p-2 rounded"
-                      value={editCompanyForm.status}
-                      onChange={(e) => setEditCompanyForm({ ...editCompanyForm, status: e.target.value })}
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-border text-foreground p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                      value={newCompany.companySize}
+                      onChange={(e) => setNewCompany({ ...newCompany, companySize: e.target.value })}
                     >
-                      <option value="active">Active</option>
-                      <option value="sunset">Sunset (Closed)</option>
+                      <option value="1-10">1-10 Employees</option>
+                      <option value="11-50">11-50 Employees</option>
+                      <option value="51-200">51-200 Employees</option>
+                      <option value="201-500">201-500 Employees</option>
+                      <option value="501-1000">501-1000 Employees</option>
+                      <option value="1000+">1000+ Employees</option>
                     </select>
+                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-foreground">Company Logo</label>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center border-2 border-dashed border-border overflow-hidden">
+                    {newCompany.imageUrl ? <img src={newCompany.imageUrl} className="w-full h-full object-cover" /> : <Building2 className="text-slate-400" />}
                   </div>
+                  <input type="file" className="text-xs" onChange={e => handleImageUpload(e, (url) => setNewCompany({...newCompany, imageUrl: url}))} />
                 </div>
-                <textarea className="w-full bg-background border border-border text-foreground p-2 rounded" value={editCompanyForm.description} onChange={e => setEditCompanyForm({...editCompanyForm, description: e.target.value})} />
-                <div className="flex gap-2">
-                  <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">Save</button>
-                  <button type="button" onClick={() => setIsEditingCompany(false)} className="bg-muted text-muted-foreground px-4 py-2 rounded hover:bg-accent border border-border">Cancel</button>
-                </div>
-              </form>
-          )}
-          
-          {/* Job Management */}
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Active Job Postings</h2>
-              <button onClick={() => { setIsPostingJob(!isPostingJob); resetJobForm(); }} className="bg-primary text-primary-foreground px-4 py-2 rounded hover:opacity-90">
-                {isPostingJob ? "Cancel" : "Post New Job"}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-foreground">About Company</label>
+                <textarea 
+                  placeholder="Describe your company's mission and culture..." 
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-border text-foreground p-3 rounded-xl min-h-[120px] focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                  value={newCompany.description} 
+                  onChange={e => setNewCompany({...newCompany, description: e.target.value})} 
+                  required 
+                />
+              </div>
+
+              <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 dark:shadow-none">
+                Register Company
               </button>
+            </form>
+          </div>
+        ) : (
+          /* DASHBOARD CONTENT */
+          <div className="grid lg:grid-cols-4 gap-8">
+            
+            {/* SIDEBAR: Company Info & Stats */}
+            <div className="lg:col-span-1 space-y-6">
+              <div className="bg-white dark:bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                 <div className="h-24 bg-indigo-600 relative">
+                    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-2xl bg-white p-1 border border-border shadow-md overflow-hidden">
+                       <img 
+                          src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                    </div>
+                 </div>
+                 <div className="pt-12 p-6 text-center">
+                    <h2 className="text-xl font-bold">{company.name}</h2>
+                    <p className="text-indigo-600 text-sm font-medium mb-4">{company.industry}</p>
+                    
+                    <div className="space-y-2 mb-6">
+                       <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                         {company.description}
+                       </p>
+                    </div>
+
+                    <button 
+                      onClick={() => setIsEditingCompany(true)}
+                      className="w-full py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm font-semibold hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" /> Edit Profile
+                    </button>
+                 </div>
+                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 grid grid-cols-2 gap-4 border-t border-border">
+                    <div className="text-center border-r border-border">
+                       <p className="text-lg font-bold">{myJobs.length}</p>
+                       <p className="text-[10px] uppercase font-bold text-muted-foreground">Postings</p>
+                    </div>
+                    <div className="text-center">
+                       <p className="text-lg font-bold">{myJobs.reduce((acc, j) => acc + (j.applicants?.length || 0), 0)}</p>
+                       <p className="text-[10px] uppercase font-bold text-muted-foreground">Applicants</p>
+                    </div>
+                 </div>
+              </div>
+
+              {/* QUICK LINKS */}
+              <div className="bg-white dark:bg-card border border-border rounded-2xl p-6 shadow-sm">
+                <h3 className="font-bold mb-4 flex items-center gap-2"><LayoutDashboard className="w-4 h-4 text-indigo-600" /> Quick Links</h3>
+                <div className="space-y-2">
+                   <Link href={`/company/${company._id}`} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm group">
+                      <span className="text-muted-foreground group-hover:text-indigo-600 transition-colors">Public Profile</span>
+                      <ChevronRight className="w-4 h-4 text-slate-300" />
+                   </Link>
+                   <Link href="/jobs" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm group">
+                      <span className="text-muted-foreground group-hover:text-indigo-600 transition-colors">Browse Jobs</span>
+                      <ChevronRight className="w-4 h-4 text-slate-300" />
+                   </Link>
+                </div>
+              </div>
             </div>
 
-            {isPostingJob && (
-              <div className="bg-muted p-6 rounded border border-border mb-6">
-                <h3 className="text-lg font-bold mb-4">{editingJobId ? "Edit Circular" : "Create New Circular"}</h3>
-                <form onSubmit={handlePostOrUpdateJob} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <input placeholder="Job Title" className="bg-background border border-border text-foreground p-2 rounded" value={jobForm.title} onChange={e => setJobForm({...jobForm, title: e.target.value})} required />
-                    <select className="bg-background border border-border text-foreground p-2 rounded" value={jobForm.type} onChange={e => setJobForm({...jobForm, type: e.target.value})}>
-                      <option value="job">Job</option>
-                      <option value="internship">Internship</option>
-                    </select>
+            {/* MAIN CONTENT: Jobs & Forms */}
+            <div className="lg:col-span-3 space-y-6">
+              
+              {/* EDIT COMPANY FORM (MODAL-ISH) */}
+              {isEditingCompany && (
+                <div className="bg-white dark:bg-card border-2 border-indigo-600 rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold">Update Company Details</h2>
+                    <button onClick={() => setIsEditingCompany(false)} className="p-2 hover:bg-slate-100 rounded-full">✕</button>
                   </div>
-                  <input placeholder="Required Skills (comma separated)" className="bg-background border border-border text-foreground p-2 rounded w-full" value={jobForm.requiredSkills} onChange={e => setJobForm({...jobForm, requiredSkills: e.target.value})} required />
-                  
-                  {/* Salary Section */}
-                  <div className="p-4 rounded-lg bg-accent border border-border">
-                    <label className="block text-sm font-bold mb-2 text-primary">Salary</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <input type="number" placeholder="Min" className="bg-background border border-border text-foreground p-2 rounded" value={jobForm.salary.min} onChange={e => setJobForm({...jobForm, salary: {...jobForm.salary, min: e.target.value}})} />
-                      <input type="number" placeholder="Max" className="bg-background border border-border text-foreground p-2 rounded" value={jobForm.salary.max} onChange={e => setJobForm({...jobForm, salary: {...jobForm.salary, max: e.target.value}})} />
-                      <select className="bg-background border border-border text-foreground p-2 rounded" value={jobForm.salary.currency} onChange={e => setJobForm({...jobForm, salary: {...jobForm.salary, currency: e.target.value}})}>
-                        <option>USD</option> <option>EUR</option> <option>GBP</option> <option>CAD</option> <option>AUD</option> <option>JPY</option>
-                      </select>
-                      <select className="bg-background border border-border text-foreground p-2 rounded" value={jobForm.salary.period} onChange={e => setJobForm({...jobForm, salary: {...jobForm.salary, period: e.target.value}})}>
-                        <option value="annually">Annually</option> <option value="monthly">Monthly</option> <option value="hourly">Hourly</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Deadline (Date & Time)</label>
-                    <input
-                      type="datetime-local"
-                      required
-                      className="w-full bg-background border border-border text-foreground p-2 rounded"
-                      value={jobForm.deadline}
-                      onChange={(e) => setJobForm({ ...jobForm, deadline: e.target.value })}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Job Image/Banner</label>
-                    <input placeholder="Image URL" className="bg-background border border-border text-foreground p-2 rounded w-full" value={jobForm.imageUrl} onChange={e => setJobForm({...jobForm, imageUrl: e.target.value})} />
-                    <input type="file" onChange={e => handleImageUpload(e, (url) => setJobForm({...jobForm, imageUrl: url}))} className="mt-2 text-sm" />
-                  </div>
-
-                  <button type="submit" className="w-full bg-primary text-primary-foreground py-2 rounded hover:opacity-90">
-                    Publish Circular
-                  </button>
-                </form>
-              </div>
-            )}
-            
-            {/* Job List Display - Restored */}
-            <div className="space-y-4">
-              {myJobs.length === 0 ? (
-                <p className="text-gray-500">No jobs posted yet.</p>
-              ) : (
-                myJobs.map((job) => {
-                  const isExpired = new Date(job.deadline) <= new Date();
-                  return (
-                    <div key={job._id} className={`bg-card p-4 rounded shadow flex flex-col md:flex-row justify-between items-start gap-4 border ${isExpired ? 'border-destructive/50 opacity-75' : 'border-border'}`}>
-                      <div className="flex items-start gap-4 w-full md:w-auto">
-                        <img 
-                          src={job.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.title)}&background=random`} 
-                          alt={job.title} 
-                          className="w-20 h-20 object-cover rounded flex-shrink-0" 
-                        />
-                        <div className="flex-1">
-                          <h4 className="font-bold text-lg flex flex-wrap items-center gap-2">
-                            {job.title}
-                            <span className={`text-xs px-2 py-1 rounded text-white ${job.type === 'internship' ? 'bg-purple-500' : 'bg-blue-500'}`}>
-                              {job.type}
-                            </span>
-                            {isExpired && (
-                              <span className="text-xs px-2 py-1 rounded bg-destructive text-destructive-foreground">Expired</span>
-                            )}
-                          </h4>
-                          <div className="text-sm text-muted-foreground">
-                            Deadline: {new Date(job.deadline).toLocaleString('en-GB')}
-                          </div>
-                          {job.salary?.min && (
-                             <div className="text-sm text-green-600 font-medium mt-1">
-                               {job.salary.currency} {job.salary.min} - {job.salary.max} / {job.salary.period}
-                             </div>
-                          )}
-                          {job.requiredSkills && job.requiredSkills.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {job.requiredSkills.slice(0, 3).map((skill: string, idx: number) => (
-                                <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                                  {skill}
-                                </span>
-                              ))}
-                              {job.requiredSkills.length > 3 && (
-                                <span className="text-xs text-muted-foreground">+{job.requiredSkills.length - 3} more</span>
-                              )}
-                            </div>
-                          )}
-                          <div className="flex gap-2 mt-3">
-                            <button onClick={() => router.push(`/company/applicants/${job._id}`)} className="text-sm bg-primary/10 text-primary px-3 py-1 rounded hover:bg-primary/20 font-medium">
-                              Applicants ({job.applicants?.length || 0})
-                            </button>
-                          </div>
-                        </div>
+                  <form onSubmit={handleUpdateCompany} className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-bold mb-1">Company Name</label>
+                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.name} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, name: e.target.value })} />
                       </div>
-                      
-                      <div className="flex gap-2 w-full md:w-auto">
-                        <button onClick={() => startEditJob(job)} className="flex-1 md:flex-none px-4 py-2 border border-border rounded hover:bg-accent text-primary hover:text-primary-foreground text-sm font-medium">
-                          Edit
-                        </button>
-                        <button onClick={() => handleDeleteJob(job._id)} className="flex-1 md:flex-none px-4 py-2 border border-destructive/20 text-destructive rounded hover:bg-destructive/10 text-sm font-medium">
-                          Delete
-                        </button>
+                      <div>
+                        <label className="block text-sm font-bold mb-1">Tagline</label>
+                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.tagline} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, tagline: e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold mb-1">Industry</label>
+                        <select className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.industry} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, industry: e.target.value })}>
+                          <option value="Technology">Technology</option>
+                          <option value="Finance">Finance</option>
+                          <option value="Textiles & Garments">Textiles & Garments</option>
+                          <option value="Telecommunications">Telecommunications</option>
+                          <option value="Healthcare">Healthcare</option>
+                          <option value="Education">Education</option>
+                          <option value="Marketing & Media">Marketing & Media</option>
+                          <option value="Service & Hospitality">Service & Hospitality</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold mb-1">Company Size</label>
+                        <select className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.companySize} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, companySize: e.target.value })}>
+                          <option value="1-10">1-10 Employees</option>
+                          <option value="11-50">11-50 Employees</option>
+                          <option value="51-200">51-200 Employees</option>
+                          <option value="201-500">201-500 Employees</option>
+                          <option value="501-1000">501-1000 Employees</option>
+                          <option value="1000+">1000+ Employees</option>
+                        </select>
                       </div>
                     </div>
-                  );
-                })
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-bold mb-1">Website</label>
+                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.contact?.website} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, contact: { ...editCompanyForm.contact, website: e.target.value } })} />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold mb-1">Location</label>
+                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.contact?.location} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, contact: { ...editCompanyForm.contact, location: e.target.value } })} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold mb-1">Description</label>
+                      <textarea className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl min-h-[100px] focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.description} onChange={e => setEditCompanyForm({...editCompanyForm, description: e.target.value})} />
+                    </div>
+                    <div className="flex gap-3">
+                      <button type="submit" className="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all">Update Company</button>
+                      <button type="button" onClick={() => setIsEditingCompany(false)} className="px-6 py-3 border border-border rounded-xl font-bold hover:bg-slate-50">Cancel</button>
+                    </div>
+                  </form>
+                </div>
               )}
+
+              {/* ACTIVE POSTINGS LIST */}
+              <div className="bg-white dark:bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+                 <div className="p-6 border-b border-border flex items-center justify-between">
+                    <h3 className="text-xl font-bold flex items-center gap-2"><Briefcase className="w-5 h-5 text-indigo-600" /> Active Circulars</h3>
+                    <span className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">{myJobs.length} Total</span>
+                 </div>
+                 
+                 <div className="divide-y divide-border">
+                    {myJobs.length === 0 ? (
+                       <div className="p-20 text-center">
+                          <Briefcase className="w-16 h-16 text-slate-100 mx-auto mb-4" />
+                          <p className="text-muted-foreground">You haven't posted any jobs yet.</p>
+                       </div>
+                    ) : (
+                      myJobs.map((job) => {
+                        const isExpired = new Date(job.deadline) <= new Date();
+                        return (
+                          <div key={job._id} className={`p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isExpired ? 'opacity-60' : ''}`}>
+                            <div className="flex flex-col md:flex-row md:items-center gap-6">
+                              <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-border">
+                                <img src={job.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.title)}&background=random`} className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-1">
+                                  <h4 className="font-bold text-lg">{job.title}</h4>
+                                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${job.type === 'internship' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>{job.type}</span>
+                                  {isExpired && <span className="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Expired</span>}
+                                </div>
+                                <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+                                   <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Deadline: {new Date(job.deadline).toLocaleDateString()}</span>
+                                   <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {job.applicants?.length || 0} Applicants</span>
+                                   <span className="flex items-center gap-1 text-green-600 font-semibold"><DollarSign className="w-3.5 h-3.5" /> {job.salary?.min ? `${job.salary.min}-${job.salary.max}` : "Competitive"}</span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                 <button 
+                                   onClick={() => router.push(`/company/applicants/${job._id}`)}
+                                   className="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200"
+                                 >
+                                   View Applicants
+                                 </button>
+                                 <Link href={`/company/post-job?edit=${job._id}`} className="p-2 border border-border rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-indigo-600"><Pencil className="w-4 h-4" /></Link>
+                                 <button onClick={() => handleDeleteJob(job._id)} className="p-2 border border-border rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    )}
+                 </div>
+              </div>
+
             </div>
 
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
     </div>
   );
 }
