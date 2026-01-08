@@ -303,6 +303,7 @@ export default function CompaniesPage() {
                              src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
                              alt={company.name} 
                              fill 
+                             unoptimized
                              className="object-cover"
                            />
                         </div>
@@ -339,6 +340,7 @@ export default function CompaniesPage() {
                                  src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
                                  alt={company.name} 
                                  fill 
+                                 unoptimized
                                  className="object-cover"
                                />
                             </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   Globe, 
   Linkedin, 
@@ -22,7 +23,8 @@ import {
   Star,
   Users,
   Building2,
-  Clock
+  Clock,
+  Calendar
 } from "lucide-react";
 
 export default function PublicCompanyPage() {
@@ -80,9 +82,11 @@ export default function PublicCompanyPage() {
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <div className="relative">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-white p-1 shadow-xl border border-border overflow-hidden">
-                <img 
+                <Image 
                   src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
                   alt={company.name} 
+                  fill
+                  unoptimized
                   className="w-full h-full object-cover rounded-2xl"
                 />
               </div>
@@ -221,9 +225,11 @@ export default function PublicCompanyPage() {
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div className="w-14 h-14 relative rounded-2xl overflow-hidden border border-border bg-slate-50">
-                          <img 
+                          <Image 
                             src={job.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.title)}&background=random`} 
                             alt={job.title} 
+                            fill
+                            unoptimized
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -270,11 +276,34 @@ export default function PublicCompanyPage() {
               <h3 className="text-lg font-bold mb-6 border-b border-border pb-4">Company Overview</h3>
               
               <div className="space-y-6">
-                <SidebarInfo icon={MapPin} label="Location" value={Array.isArray(company.contact?.location) ? company.contact.location[0] : company.contact?.location || "Not specified"} color="text-indigo-500" />
+                <SidebarInfo icon={MapPin} label="Locations" value={Array.isArray(company.contact?.location) ? company.contact.location.join(' • ') : company.contact?.location || "Not specified"} color="text-indigo-500" />
                 <SidebarInfo icon={Users} label="Company Size" value={`${company.companySize} Employees`} color="text-blue-500" />
                 <SidebarInfo icon={Building2} label="Company Type" value={company.companyType} color="text-emerald-500" />
                 <SidebarInfo icon={Clock} label="Founded" value={company.foundedYear?.toString() || "Unknown"} color="text-amber-500" />
+                <SidebarInfo icon={Calendar} label="Member Since" value={new Date(company.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} color="text-slate-500" />
                 
+                {/* Leadership Section */}
+                {company.ownerId && (
+                  <div className="pt-6 border-t border-border">
+                    <h4 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Leadership</h4>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full border border-border overflow-hidden bg-slate-50 flex-shrink-0 relative">
+                        <Image 
+                          src={company.ownerId.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.ownerId.name)}&background=random`} 
+                          alt={company.ownerId.name} 
+                          fill
+                          unoptimized
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-foreground">{company.ownerId.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{company.ownerId.title || "Founder / Owner"}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="pt-6 border-t border-border space-y-4">
                   <h4 className="text-xs font-black text-muted-foreground uppercase tracking-widest">Contact Information</h4>
                   {company.contact?.website && (

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   User, 
   MapPin, 
@@ -63,9 +64,11 @@ export default function ProfilePage() {
         <div className="bg-white dark:bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
           <div className="h-32 bg-indigo-600 relative">
              <div className="absolute -bottom-12 left-8 w-32 h-32 rounded-3xl bg-white p-1 border border-border shadow-xl overflow-hidden">
-                <img 
+                <Image 
                   src={userData?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData?.name || "User")}&background=random`} 
                   alt="Profile" 
+                  fill 
+                  unoptimized
                   className="w-full h-full object-cover rounded-2xl"
                 />
              </div>

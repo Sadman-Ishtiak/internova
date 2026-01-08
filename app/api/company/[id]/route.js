@@ -8,7 +8,7 @@ export async function GET(req, { params }) {
   await dbConnect();
 
   try {
-    const company = await Company.findById(id);
+    const company = await Company.findById(id).populate('ownerId', 'name profileImage title');
     if (!company) {
       return NextResponse.json({ error: "Company not found" }, { status: 404 });
     }

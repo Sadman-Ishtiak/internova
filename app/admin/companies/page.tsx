@@ -101,9 +101,12 @@ export default function AdminCompaniesPage() {
                 <tr key={company._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden border border-border flex-shrink-0">
-                        <img 
+                      <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden border border-border flex-shrink-0 relative">
+                        <Image 
                           src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
+                          alt={company.name}
+                          fill
+                          unoptimized
                           className="w-full h-full object-cover"
                         />
                       </div>

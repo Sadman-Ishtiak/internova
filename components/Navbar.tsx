@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
@@ -100,9 +101,12 @@ export default function Navbar() {
                   <span className="text-sm font-medium text-foreground ml-2 hidden lg:block max-w-[100px] truncate">
                     {session.user?.name}
                   </span>
-                  <img 
+                  <Image 
                     src={session.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user?.name || "User")}&background=random`} 
                     alt="Profile" 
+                    width={32}
+                    height={32}
+                    unoptimized
                     className="w-8 h-8 rounded-full object-cover ring-2 ring-background"
                   />
                 </button>
@@ -168,10 +172,13 @@ export default function Navbar() {
             ) : (
               <>
                  <div className="flex items-center gap-3 px-4 py-4 mb-2 bg-secondary/30 rounded-lg">
-                    <img 
+                    <Image 
                       src={session.user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user?.name || "User")}&background=random`} 
                       alt="Profile" 
-                      className="w-10 h-10 rounded-full"
+                      width={40}
+                      height={40}
+                      unoptimized
+                      className="rounded-full"
                     />
                     <div>
                       <p className="font-medium text-foreground">{session.user?.name}</p>

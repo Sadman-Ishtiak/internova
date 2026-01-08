@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   MapPin, 
   Briefcase, 
@@ -93,13 +94,22 @@ export default function JobDetailsPage() {
             <div className="bg-white dark:bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
                <div className="relative h-48 bg-slate-900 overflow-hidden">
                   <div className="absolute inset-0 opacity-30">
-                     <img src={job.imageUrl || job.companyId?.imageUrl} className="w-full h-full object-cover blur-sm" />
+                     <Image 
+                       src={job.imageUrl || job.companyId?.imageUrl || "/assets/images/featured-job/img-01.png"} 
+                       alt="Background"
+                       fill
+                       unoptimized
+                       className="w-full h-full object-cover blur-sm" 
+                     />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
                   <div className="absolute bottom-6 left-8 flex items-end gap-6">
-                     <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-2xl border border-border overflow-hidden flex-shrink-0">
-                        <img 
+                     <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-2xl border border-border overflow-hidden flex-shrink-0 relative">
+                        <Image 
                           src={job.companyId?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.companyId?.name || "Company")}&background=random`} 
+                          alt={job.companyId?.name || "Company"}
+                          fill
+                          unoptimized
                           className="w-full h-full object-cover rounded-xl"
                         />
                      </div>
@@ -158,24 +168,32 @@ export default function JobDetailsPage() {
                </div>
             </div>
 
-            {/* ABOUT COMPANY CARD */}
-            <div className="bg-white dark:bg-card border border-border rounded-3xl p-8 shadow-sm">
+            {/* ABOUT THE EMPLOYER SECTION */}
+            <Link 
+              href={`/company/${job.companyId?._id}`}
+              className="block bg-white dark:bg-card border border-border rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all group"
+            >
                <div className="flex items-center justify-between mb-6 text-foreground">
-                  <h3 className="text-xl font-bold">About the Employer</h3>
-                  <Link href={`/company/${job.companyId?._id}`} className="text-indigo-600 font-bold text-sm hover:underline flex items-center gap-1">
-                    Full Profile <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
+                  <h3 className="text-xl font-bold flex items-center gap-2 group-hover:text-indigo-600 transition-colors">
+                    About the Employer
+                  </h3>
+                  <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
+                    <ArrowRight className="w-5 h-5" />
+                  </div>
                </div>
                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden border border-border flex-shrink-0">
-                     <img 
+                  <div className="w-16 h-16 rounded-xl overflow-hidden border border-border flex-shrink-0 bg-slate-50 relative">
+                     <Image 
                        src={job.companyId?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.companyId?.name || "Company")}&background=random`} 
+                       alt={job.companyId?.name || "Company"}
+                       fill
+                       unoptimized
                        className="w-full h-full object-cover" 
                      />
                   </div>
                   <div className="flex-1">
                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-lg font-bold text-foreground">{job.companyId?.name}</h4>
+                        <h4 className="text-lg font-bold text-foreground group-hover:text-indigo-600 transition-colors">{job.companyId?.name}</h4>
                         {job.companyId?.verified && <ShieldCheck className="w-5 h-5 text-green-500 fill-green-50" />}
                      </div>
                      {job.companyId?.tagline && <p className="text-sm text-indigo-600 font-medium mb-3 italic">"{job.companyId.tagline}"</p>}
@@ -186,7 +204,7 @@ export default function JobDetailsPage() {
                      </div>
                   </div>
                </div>
-            </div>
+            </Link>
           </div>
 
           {/* RIGHT: Summary & Actions */}

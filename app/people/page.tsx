@@ -168,6 +168,7 @@ export default function PeoplePage() {
                              src={person.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=random`} 
                              alt={person.name} 
                              fill 
+                             unoptimized
                              className="object-cover"
                            />
                         </div>
@@ -202,6 +203,7 @@ export default function PeoplePage() {
                                  src={person.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=random`} 
                                  alt={person.name} 
                                  fill 
+                                 unoptimized
                                  className="object-cover"
                                />
                             </div>

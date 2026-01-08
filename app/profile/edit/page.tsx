@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   ChevronLeft, 
   User, 
@@ -181,9 +182,11 @@ export default function EditProfilePage() {
                 <label className="block text-sm font-bold mb-2">Profile Image</label>
                 <div className="flex items-center gap-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-border">
                   <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-border overflow-hidden relative group">
-                    <img 
+                    <Image 
                       src={imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=random`} 
                       alt="Profile" 
+                      fill
+                      unoptimized
                       className="w-full h-full object-cover"
                     />
                   </div>

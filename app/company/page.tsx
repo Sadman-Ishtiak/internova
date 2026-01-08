@@ -35,19 +35,10 @@ export default function CompanyDashboard() {
   const [newCompany, setNewCompany] = useState({ 
     name: "", tagline: "", description: "", imageUrl: "", industry: "Technology",
     companySize: "1-10", companyType: "Privately Held", foundedYear: new Date().getFullYear(),
-    contact: { website: "", linkedin: "", email: "", phone: "", location: "" },
-    socialMedia: { facebook: "", twitter: "", instagram: "", youtube: "" }
-  });
-  const [editCompanyForm, setEditCompanyForm] = useState<any>({ 
-    name: "", tagline: "", description: "", imageUrl: "", status: "", industry: "Technology",
-    companySize: "1-10", companyType: "Privately Held", foundedYear: new Date().getFullYear(),
-    contact: { website: "", linkedin: "", email: "", phone: "", location: "" },
-    socialMedia: { facebook: "", twitter: "", instagram: "", youtube: "" }
-  });
-  const [isEditingCompany, setIsEditingCompany] = useState(false);
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldSetter: (url: string) => void) => {
-    const file = e.target.files?.[0]; if (!file) return;
+        contact: { website: "", linkedin: "", email: "", phone: "", location: "" }
+      });
+    
+      const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldSetter: (url: string) => void) => {    const file = e.target.files?.[0]; if (!file) return;
     const formData = new FormData(); formData.append("file", file);
     try {
       const res = await fetch("/api/upload", { method: "POST", body: formData });
@@ -67,19 +58,6 @@ export default function CompanyDashboard() {
       const data = await res.json();
       if (data.company) {
         setCompany(data.company);
-        setEditCompanyForm({
-          name: data.company.name,
-          tagline: data.company.tagline || "",
-          description: data.company.description || "",
-          imageUrl: data.company.imageUrl || "",
-          status: data.company.status || "active",
-          industry: data.company.industry || "Technology",
-          companySize: data.company.companySize || "1-10",
-          companyType: data.company.companyType || "Privately Held",
-          foundedYear: data.company.foundedYear || new Date().getFullYear(),
-          contact: data.company.contact || { website: "", linkedin: "", email: "", phone: "", location: "" },
-          socialMedia: data.company.socialMedia || { facebook: "", twitter: "", instagram: "", youtube: "" }
-        });
         fetchMyJobs(data.company._id);
       }
     } catch (error) { console.error("Error fetching company:", error); } 
@@ -104,19 +82,6 @@ export default function CompanyDashboard() {
       if (res.ok) { setCompany(data.company); alert("Company registered!"); } 
       else alert(data.error);
     } catch (error) { console.error("Error creating company:", error); }
-  };
-
-  const handleUpdateCompany = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/company", {
-        method: "PUT", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editCompanyForm)
-      });
-      const data = await res.json();
-      if (res.ok) { setCompany(data.company); setIsEditingCompany(false); alert("Company updated!"); }
-      else alert(data.error);
-    } catch (error) { console.error("Error updating company:", error); }
   };
   
   const handleDeleteJob = async (jobId: string) => {
@@ -224,8 +189,12 @@ export default function CompanyDashboard() {
               <div className="space-y-2">
                 <label className="text-sm font-bold text-foreground">Company Logo</label>
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center border-2 border-dashed border-border overflow-hidden">
-                    {newCompany.imageUrl ? <img src={newCompany.imageUrl} className="w-full h-full object-cover" /> : <Building2 className="text-slate-400" />}
+                  <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center border-2 border-dashed border-border overflow-hidden relative">
+                    {newCompany.imageUrl ? (
+                      <Image src={newCompany.imageUrl} alt="Logo Preview" fill unoptimized className="object-cover" />
+                    ) : (
+                      <Building2 className="text-slate-400" />
+                    )}
                   </div>
                   <input type="file" className="text-xs" onChange={e => handleImageUpload(e, (url) => setNewCompany({...newCompany, imageUrl: url}))} />
                 </div>
@@ -256,8 +225,11 @@ export default function CompanyDashboard() {
               <div className="bg-white dark:bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
                  <div className="h-24 bg-indigo-600 relative">
                     <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-2xl bg-white p-1 border border-border shadow-md overflow-hidden">
-                       <img 
+                       <Image 
                           src={company.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(company.name)}&background=random`} 
+                          alt={company.name}
+                          fill
+                          unoptimized
                           className="w-full h-full object-cover rounded-xl"
                         />
                     </div>
@@ -272,12 +244,12 @@ export default function CompanyDashboard() {
                        </p>
                     </div>
 
-                    <button 
-                      onClick={() => setIsEditingCompany(true)}
+                    <Link 
+                      href="/company/edit"
                       className="w-full py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm font-semibold hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
                     >
                       <Settings className="w-4 h-4" /> Edit Profile
-                    </button>
+                    </Link>
                  </div>
                  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 grid grid-cols-2 gap-4 border-t border-border">
                     <div className="text-center border-r border-border">
@@ -310,71 +282,6 @@ export default function CompanyDashboard() {
             {/* MAIN CONTENT: Jobs & Forms */}
             <div className="lg:col-span-3 space-y-6">
               
-              {/* EDIT COMPANY FORM (MODAL-ISH) */}
-              {isEditingCompany && (
-                <div className="bg-white dark:bg-card border-2 border-indigo-600 rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">Update Company Details</h2>
-                    <button onClick={() => setIsEditingCompany(false)} className="p-2 hover:bg-slate-100 rounded-full">✕</button>
-                  </div>
-                  <form onSubmit={handleUpdateCompany} className="space-y-4">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold mb-1">Company Name</label>
-                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.name} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, name: e.target.value })} />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-1">Tagline</label>
-                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.tagline} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, tagline: e.target.value })} />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-1">Industry</label>
-                        <select className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.industry} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, industry: e.target.value })}>
-                          <option value="Technology">Technology</option>
-                          <option value="Finance">Finance</option>
-                          <option value="Textiles & Garments">Textiles & Garments</option>
-                          <option value="Telecommunications">Telecommunications</option>
-                          <option value="Healthcare">Healthcare</option>
-                          <option value="Education">Education</option>
-                          <option value="Marketing & Media">Marketing & Media</option>
-                          <option value="Service & Hospitality">Service & Hospitality</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-1">Company Size</label>
-                        <select className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.companySize} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, companySize: e.target.value })}>
-                          <option value="1-10">1-10 Employees</option>
-                          <option value="11-50">11-50 Employees</option>
-                          <option value="51-200">51-200 Employees</option>
-                          <option value="201-500">201-500 Employees</option>
-                          <option value="501-1000">501-1000 Employees</option>
-                          <option value="1000+">1000+ Employees</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold mb-1">Website</label>
-                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.contact?.website} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, contact: { ...editCompanyForm.contact, website: e.target.value } })} />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-1">Location</label>
-                        <input className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.contact?.location} onChange={(e) => setEditCompanyForm({ ...editCompanyForm, contact: { ...editCompanyForm.contact, location: e.target.value } })} />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold mb-1">Description</label>
-                      <textarea className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl min-h-[100px] focus:ring-2 focus:ring-indigo-500 outline-none" value={editCompanyForm.description} onChange={e => setEditCompanyForm({...editCompanyForm, description: e.target.value})} />
-                    </div>
-                    <div className="flex gap-3">
-                      <button type="submit" className="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-all">Update Company</button>
-                      <button type="button" onClick={() => setIsEditingCompany(false)} className="px-6 py-3 border border-border rounded-xl font-bold hover:bg-slate-50">Cancel</button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
               {/* ACTIVE POSTINGS LIST */}
               <div className="bg-white dark:bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
                  <div className="p-6 border-b border-border flex items-center justify-between">
@@ -394,8 +301,14 @@ export default function CompanyDashboard() {
                         return (
                           <div key={job._id} className={`p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isExpired ? 'opacity-60' : ''}`}>
                             <div className="flex flex-col md:flex-row md:items-center gap-6">
-                              <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-border">
-                                <img src={job.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.title)}&background=random`} className="w-full h-full object-cover" />
+                              <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-border relative">
+                                <Image 
+                                  src={job.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(job.title)}&background=random`} 
+                                  alt={job.title}
+                                  fill
+                                  unoptimized
+                                  className="w-full h-full object-cover" 
+                                />
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-1">

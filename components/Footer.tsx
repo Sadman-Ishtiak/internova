@@ -62,7 +62,7 @@ export default function Footer() {
       {/* FOOTER BOTTOM */}
       <div className="bg-slate-950 py-6 border-t border-slate-800">
         <div className="container mx-auto px-4 text-center text-slate-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} Internova. Developed with ❤️ for future leaders.</p>
+          <p>&copy; {new Date().getFullYear()} Internova. Developed By Sadman Ishtiak and Md. Jahid Hasan Khan Ornob.</p>
         </div>
       </div>
     </footer>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function ApplicantsPage() {
   const { jobId } = useParams();
@@ -83,11 +84,13 @@ export default function ApplicantsPage() {
             <div key={app._id} className="bg-card p-6 rounded-lg shadow-sm border border-border hover:shadow-md transition duration-200">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Profile Image */}
-                <div className="flex-shrink-0">
-                  <img 
+                <div className="flex-shrink-0 relative w-24 h-24">
+                  <Image 
                     src={app.userId.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(app.userId.name)}&background=random`} 
                     alt={app.userId.name} 
-                    className="w-24 h-24 rounded-full object-cover border-2 border-border shadow-sm"
+                    fill
+                    unoptimized
+                    className="rounded-full object-cover border-2 border-border shadow-sm"
                   />
                 </div>
                 
