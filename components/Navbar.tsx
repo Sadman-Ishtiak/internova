@@ -151,7 +151,7 @@ export default function Navbar() {
              <ThemeToggle />
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="text-muted-foreground hover:text-primary p-2 rounded-md hover:bg-accent transition-colors"
+              className="text-muted-foreground hover:text-primary p-2 rounded-full hover:bg-accent transition-all"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

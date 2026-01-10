@@ -27,6 +27,9 @@ function PostJobFormContent() {
   const [jobForm, setJobForm] = useState({
     title: "",
     type: "job",
+    location: "Remote",
+    category: "",
+    description: "",
     imageUrl: "",
     requiredSkills: "",
     deadline: "",
@@ -46,6 +49,9 @@ function PostJobFormContent() {
         setJobForm({
           title: data.job.title,
           type: data.job.type || "job",
+          location: data.job.location || "Remote",
+          category: data.job.category || "",
+          description: data.job.description || "",
           imageUrl: data.job.imageUrl,
           requiredSkills: data.job.requiredSkills.join(", "),
           deadline: data.job.deadline ? new Date(data.job.deadline).toISOString().slice(0, 16) : "",
@@ -154,6 +160,44 @@ function PostJobFormContent() {
               />
             </div>
             <div className="space-y-2">
+              <label className="text-sm font-bold text-foreground">Job Category</label>
+              <select 
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                value={jobForm.category} 
+                onChange={e => setJobForm({...jobForm, category: e.target.value})}
+                required
+              >
+                <option value="">Select Category</option>
+                <option value="IT & Software">IT & Software</option>
+                <option value="Finance & Accounting">Finance & Accounting</option>
+                <option value="Sales & Marketing">Sales & Marketing</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Design & Multimedia">Design & Multimedia</option>
+                <option value="Management">Management</option>
+                <option value="Legal">Legal</option>
+                <option value="Operations">Operations</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-foreground">Location</label>
+              <select 
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                value={jobForm.location} 
+                onChange={e => setJobForm({...jobForm, location: e.target.value})}
+              >
+                <option value="Remote">Remote</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chattogram">Chattogram</option>
+                <option value="Sylhet">Sylhet</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Barishal">Barishal</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+              </select>
+            </div>
+            <div className="space-y-2">
               <label className="text-sm font-bold text-foreground">Employment Type</label>
               <select 
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
@@ -187,6 +231,17 @@ function PostJobFormContent() {
                 required 
               />
             </div>
+          </div>
+
+          {/* Description */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-foreground">Job Description</label>
+            <textarea 
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all h-40" 
+              placeholder="Detailed description of the role, responsibilities, and requirements..." 
+              value={jobForm.description} 
+              onChange={e => setJobForm({...jobForm, description: e.target.value})} 
+            />
           </div>
 
           {/* Salary & Deadline */}

@@ -75,6 +75,11 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-bold text-foreground group-hover:text-primary mb-2">Manage Companies</h2>
             <p className="text-muted-foreground">Verify, feature, or remove company profiles.</p>
           </Link>
+
+          <Link href="/admin/risk" className="block bg-red-50 dark:bg-red-900/10 p-8 rounded-lg shadow-md hover:shadow-lg transition border border-red-100 dark:border-red-900/30 group">
+            <h2 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-2">Risk Analysis</h2>
+            <p className="text-red-600/80 dark:text-red-300/80">Detect ghost jobs and spam bots.</p>
+          </Link>
         </div>
 
       </div>

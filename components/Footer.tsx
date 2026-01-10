@@ -31,7 +31,7 @@ export default function Footer() {
               <h5 className="text-white font-semibold text-lg mb-4">Company</h5>
               <ul className="space-y-2">
                 <li><FooterLink href="/about">About Us</FooterLink></li>
-                <li><FooterLink href="/blog">Blog</FooterLink></li>
+                {/* <li><FooterLink href="/blog">Blog</FooterLink></li> */}
               </ul>
             </div>
 

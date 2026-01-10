@@ -38,7 +38,16 @@ const UserSchema = new mongoose.Schema({
   
   // Company Association
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
-  companyRole: { type: String, enum: ['owner', 'manager', null], default: null }
+  companyRole: { type: String, enum: ['owner', 'manager', null], default: null },
+
+  // Trust & Safety
+  reports: [{
+    reporterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Can be a company owner
+    reason: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
+  isFlagged: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now }
 });
 
 // This prevents "Model already compiled" errors in Next.js

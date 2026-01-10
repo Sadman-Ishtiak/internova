@@ -141,10 +141,16 @@ export default function JobDetailsPage() {
 
                   <div className="prose dark:prose-invert max-w-none">
                     <h2 className="text-2xl font-bold mb-4 text-foreground">Description</h2>
-                    <p className="text-muted-foreground leading-relaxed text-lg">
-                      This is an exciting opportunity for a <strong>{job.title}</strong> to join the team at <strong>{job.companyId?.name}</strong>. 
-                      We are looking for someone who is passionate, driven, and ready to make an impact.
-                    </p>
+                    {job.description ? (
+                      <p className="text-muted-foreground leading-relaxed text-lg whitespace-pre-line">
+                        {job.description}
+                      </p>
+                    ) : (
+                      <p className="text-muted-foreground leading-relaxed text-lg">
+                        This is an exciting opportunity for a <strong>{job.title}</strong> to join the team at <strong>{job.companyId?.name}</strong>. 
+                        We are looking for someone who is passionate, driven, and ready to make an impact.
+                      </p>
+                    )}
                     {job.companyId?.description && (
                       <div className="mt-6 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-border">
                         <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2 text-foreground">Company Context</h4>

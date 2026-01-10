@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { 
@@ -22,32 +23,65 @@ import {
 
 export default function Home() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [jobs, setJobs] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("recent");
+  
+  // Search state
+  const [searchTitle, setSearchTitle] = useState("");
+  const [searchLocation, setSearchLocation] = useState("");
 
   useEffect(() => {
-    fetchJobs();
+    fetchData();
 
     const handleRefresh = () => {
       setLoading(true);
-      fetchJobs();
+      fetchData();
     };
 
     window.addEventListener("refresh-data", handleRefresh);
     return () => window.removeEventListener("refresh-data", handleRefresh);
   }, []);
 
-  const fetchJobs = async () => {
+  const fetchData = async () => {
     try {
-      const res = await fetch("/api/jobs");
-      const data = await res.json();
-      setJobs(data.jobs || []);
+      const [jobsRes, catsRes] = await Promise.all([
+        fetch("/api/jobs"),
+        fetch("/api/stats/categories")
+      ]);
+      
+      const jobsData = await jobsRes.json();
+      const catsData = await catsRes.json();
+      
+      setJobs(jobsData.jobs || []);
+      setCategories(catsData.categories || []);
     } catch (error) {
-      console.error("Failed to fetch jobs", error);
+      console.error("Failed to fetch data", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getCategoryIcon = (name: string) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes("software") || lowerName.includes("it")) return Code;
+    if (lowerName.includes("tech")) return Monitor;
+    if (lowerName.includes("finance") || lowerName.includes("account")) return BarChart;
+    if (lowerName.includes("design") || lowerName.includes("multimedia")) return PenTool;
+    if (lowerName.includes("marketing")) return Megaphone;
+    if (lowerName.includes("data")) return Database;
+    if (lowerName.includes("hr") || lowerName.includes("human")) return User;
+    return Briefcase;
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchTitle) params.append("search", searchTitle);
+    if (searchLocation && searchLocation !== "Location...") params.append("location", searchLocation);
+    router.push(`/jobs?${params.toString()}`);
   };
 
   const handleApply = async (jobId: string) => {
@@ -67,17 +101,6 @@ export default function Home() {
       alert(data.error);
     }
   };
-
-  const categories = [
-    { icon: Code, name: "IT & Software", count: "2024 Jobs" },
-    { icon: Monitor, name: "Technology", count: "1250 Jobs" },
-    { icon: Briefcase, name: "Government", count: "802 Jobs" },
-    { icon: BarChart, name: "Accounting / Finance", count: "577 Jobs" },
-    { icon: PenTool, name: "Design & Multimedia", count: "1045 Jobs" },
-    { icon: Megaphone, name: "Marketing", count: "495 Jobs" },
-    { icon: Database, name: "Data Science", count: "150 Jobs" },
-    { icon: User, name: "Human Resource", count: "1516 Jobs" },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -100,7 +123,7 @@ export default function Home() {
               </p>
               
               {/* Search Form */}
-              <div className="bg-white dark:bg-slate-900 p-3 rounded-xl shadow-lg border border-border max-w-xl">
+              <form onSubmit={handleSearch} className="bg-white dark:bg-slate-900 p-3 rounded-xl shadow-lg border border-border max-w-xl">
                 <div className="flex flex-col md:flex-row gap-2">
                   <div className="flex-1 flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <Briefcase className="w-5 h-5 text-muted-foreground mr-3" />
@@ -108,11 +131,17 @@ export default function Home() {
                       type="text" 
                       placeholder="Job title, keywords..." 
                       className="bg-transparent border-none focus:outline-none w-full text-sm"
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
                     />
                   </div>
                   <div className="flex-1 flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <MapPin className="w-5 h-5 text-muted-foreground mr-3" />
-                     <select className="bg-transparent border-none focus:outline-none w-full text-sm appearance-none text-muted-foreground">
+                     <select 
+                       className="bg-transparent border-none focus:outline-none w-full text-sm appearance-none text-muted-foreground"
+                       value={searchLocation}
+                       onChange={(e) => setSearchLocation(e.target.value)}
+                     >
                         <option>Location...</option>
                         <option>Dhaka</option>
                         <option>Chattogram</option>
@@ -122,11 +151,11 @@ export default function Home() {
                         <option>Remote</option>
                      </select>
                   </div>
-                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+                  <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
                     <Search className="w-5 h-5" />
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
 
             {/* Hero Image */}
@@ -164,15 +193,22 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.map((cat, idx) => (
-              <div key={idx} className="group p-6 bg-card border border-border rounded-xl hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer">
-                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                  <cat.icon className="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors" />
+            {categories.map((cat, idx) => {
+              const Icon = getCategoryIcon(cat.name);
+              return (
+                <div 
+                  key={idx} 
+                  onClick={() => router.push(`/jobs?category=${encodeURIComponent(cat.name)}`)}
+                  className="group p-6 bg-card border border-border rounded-xl hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer"
+                >
+                  <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
+                    <Icon className="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-1 group-hover:text-indigo-600 transition-colors line-clamp-1">{cat.name}</h3>
+                  <p className="text-sm text-muted-foreground">{cat.count} Jobs</p>
                 </div>
-                <h3 className="font-semibold text-lg mb-1 group-hover:text-indigo-600 transition-colors">{cat.name}</h3>
-                <p className="text-sm text-muted-foreground">{cat.count}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="text-center mt-10">

@@ -200,7 +200,16 @@ export default function ProfilePage() {
                 <ContactItem icon={Globe} label="Portfolio" value={userData?.contact?.website} isLink />
               </div>
 
-              <div className="mt-10 pt-8 border-t border-border">
+              <div className="mt-8 pt-6 border-t border-border">
+                <button 
+                  onClick={() => router.push('/profile/applications')}
+                  className="w-full py-3 bg-white dark:bg-card border-2 border-indigo-100 dark:border-indigo-900/30 text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all flex items-center justify-center gap-2"
+                >
+                  <Briefcase className="w-5 h-5" /> View My Applications
+                </button>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-border">
                 <div className="bg-slate-50 dark:bg-slate-800/5 p-6 rounded-2xl text-center">
                    <h4 className="font-bold mb-2">Employer Zone</h4>
                    <p className="text-xs text-muted-foreground mb-4">Manage your company dashboard and job circulars.</p>

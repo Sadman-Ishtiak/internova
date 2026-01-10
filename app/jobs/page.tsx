@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { 
@@ -14,18 +15,23 @@ import {
   Filter,
   LayoutGrid,
   List,
-  ShieldCheck
+  ShieldCheck,
+  Building2
 } from "lucide-react";
 import Countdown from "@/components/Countdown";
 
-export default function JobsPage() {
+function JobsList() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   
   // Filters
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const [locationFilter, setLocationFilter] = useState(searchParams.get("location") || "All Locations");
+  const [categoryFilter, setCategoryFilter] = useState(searchParams.get("category") || "all");
+  const [industryFilter, setIndustryFilter] = useState(searchParams.get("industry") || "all");
   const [typeFilter, setTypeFilter] = useState("all");
 
   // Debounce search to avoid too many requests
@@ -43,7 +49,7 @@ export default function JobsPage() {
       clearTimeout(delayDebounceFn);
       window.removeEventListener("refresh-data", handleRefresh);
     };
-  }, [searchTerm, typeFilter]);
+  }, [searchTerm, typeFilter, locationFilter, categoryFilter, industryFilter]);
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -51,6 +57,9 @@ export default function JobsPage() {
       const params = new URLSearchParams();
       if (searchTerm) params.append("search", searchTerm);
       if (typeFilter !== "all") params.append("type", typeFilter);
+      if (locationFilter !== "All Locations") params.append("location", locationFilter);
+      if (categoryFilter !== "all") params.append("category", categoryFilter);
+      if (industryFilter !== "all") params.append("industry", industryFilter);
 
       const res = await fetch(`/api/jobs?${params.toString()}`);
       const data = await res.json();
@@ -150,12 +159,16 @@ export default function JobsPage() {
                     </div>
                   </div>
 
-                  {/* Location (Static Placeholder for UI) */}
+                  {/* Location */}
                   <div>
                     <label className="block text-sm font-semibold mb-2 text-foreground">Location</label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <select className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all appearance-none text-muted-foreground">
+                      <select 
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all appearance-none text-muted-foreground"
+                        value={locationFilter}
+                        onChange={(e) => setLocationFilter(e.target.value)}
+                      >
                         <option>All Locations</option>
                         <option>Dhaka</option>
                         <option>Chattogram</option>
@@ -167,8 +180,51 @@ export default function JobsPage() {
                     </div>
                   </div>
 
+                  {/* Category */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Category</label>
+                    <select 
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                      value={categoryFilter}
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                    >
+                      <option value="all">All Categories</option>
+                      <option value="IT & Software">IT & Software</option>
+                      <option value="Finance & Accounting">Finance & Accounting</option>
+                      <option value="Sales & Marketing">Sales & Marketing</option>
+                      <option value="Human Resources">Human Resources</option>
+                      <option value="Design & Multimedia">Design & Multimedia</option>
+                      <option value="Management">Management</option>
+                      <option value="Legal">Legal</option>
+                      <option value="Operations">Operations</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Industry */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Industry</label>
+                    <select 
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-border p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                      value={industryFilter}
+                      onChange={(e) => setIndustryFilter(e.target.value)}
+                    >
+                      <option value="all">All Industries</option>
+                      <option value="Technology">Technology</option>
+                      <option value="Healthcare">Healthcare</option>
+                      <option value="Finance">Finance</option>
+                      <option value="Education">Education</option>
+                      <option value="Construction">Construction</option>
+                      <option value="Real Estate">Real Estate</option>
+                      <option value="Manufacturing">Manufacturing</option>
+                      <option value="Retail">Retail</option>
+                      <option value="Telecommunications">Telecommunications</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
                   <button 
-                    onClick={() => { setSearchTerm(""); setTypeFilter("all"); }}
+                    onClick={() => { setSearchTerm(""); setTypeFilter("all"); setLocationFilter("All Locations"); setCategoryFilter("all"); setIndustryFilter("all"); }}
                     className="w-full py-2 text-indigo-600 text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
                   >
                     Clear All Filters
@@ -248,6 +304,12 @@ export default function JobsPage() {
                             
                             <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-muted-foreground mt-3">
                               <span className="flex items-center gap-1.5">
+                                <Briefcase className="w-4 h-4 text-indigo-500" /> {job.category || "General"}
+                              </span>
+                              <span className="flex items-center gap-1.5">
+                                <Building2 className="w-4 h-4 text-slate-500" /> {job.industry || "General"}
+                              </span>
+                              <span className="flex items-center gap-1.5">
                                 <MapPin className="w-4 h-4 text-indigo-500" /> {job.location || "Remote"}
                               </span>
                               <span className="flex items-center gap-1.5">
@@ -307,6 +369,10 @@ export default function JobsPage() {
 
                         <div className="space-y-2 mb-6 flex-grow">
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Briefcase className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                            <span className="truncate">{job.category || "General"}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <MapPin className="w-4 h-4 text-indigo-500 flex-shrink-0" />
                             <span className="truncate">{job.location || "Remote"}</span>
                           </div>
@@ -351,5 +417,13 @@ export default function JobsPage() {
       </section>
 
     </div>
+  );
+}
+
+export default function JobsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <JobsList />
+    </Suspense>
   );
 }

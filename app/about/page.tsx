@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { 
   Users, 
   Target, 
@@ -118,12 +119,12 @@ export default function AboutPage() {
                 Join Internova today and take the first step towards a successful career.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <button className="bg-white text-indigo-600 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition-colors">
+                <Link href="/jobs" className="bg-white text-indigo-600 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition-colors">
                   Find an Internship
-                </button>
-                <button className="bg-indigo-500 text-white border border-indigo-400 px-8 py-3 rounded-xl font-bold hover:bg-indigo-400 transition-colors">
+                </Link>
+                <Link href="/company" className="bg-indigo-500 text-white border border-indigo-400 px-8 py-3 rounded-xl font-bold hover:bg-indigo-400 transition-colors">
                   Post a Job
-                </button>
+                </Link>
               </div>
             </div>
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -ml-32 -mt-32"></div>

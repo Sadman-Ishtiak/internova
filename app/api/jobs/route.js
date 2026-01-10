@@ -12,6 +12,9 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const companyId = searchParams.get('companyId');
   const search = searchParams.get('search');
+  const location = searchParams.get('location');
+  const category = searchParams.get('category');
+  const industry = searchParams.get('industry');
   const type = searchParams.get('type');
   const includeExpired = searchParams.get('includeExpired') === 'true';
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
@@ -30,6 +33,18 @@ export async function GET(req) {
 
   if (type && type !== 'all') {
     query.type = type;
+  }
+
+  if (location && location !== 'All Locations' && location !== 'Location...') {
+    query.location = { $regex: new RegExp(location, 'i') };
+  }
+
+  if (category && category !== 'all') {
+    query.category = category;
+  }
+
+  if (industry && industry !== 'all') {
+    query.industry = industry;
   }
 
   if (search) {
@@ -103,6 +118,10 @@ export async function POST(req) {
     const newJob = await Job.create({
       companyId: user.companyId,
       title: data.title,
+      location: data.location || 'Remote',
+      category: data.category || 'Other',
+      industry: company.industry || 'Other',
+      description: data.description || '',
       type: data.type || 'job',
       imageUrl: data.imageUrl,
       salary: data.salary,
@@ -123,7 +142,7 @@ export async function PUT(req) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { jobId, title, type, imageUrl, salary, requiredSkills, deadline } = await req.json();
+    const { jobId, title, location, category, description, type, imageUrl, salary, requiredSkills, deadline } = await req.json();
     await dbConnect();
     
     // Validate required fields
@@ -149,6 +168,9 @@ export async function PUT(req) {
 
     // Update Fields
     if (title) job.title = title;
+    if (location) job.location = location;
+    if (category) job.category = category;
+    if (description) job.description = description;
     if (type) job.type = type;
     if (imageUrl) job.imageUrl = imageUrl;
     if (salary) job.salary = salary;
