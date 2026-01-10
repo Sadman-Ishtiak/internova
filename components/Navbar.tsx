@@ -19,7 +19,8 @@ import {
   UserPlus,
   ShieldAlert,
   Users,
-  ChevronRight
+  ChevronRight,
+  Home
 } from "lucide-react";
 
 export default function Navbar() {
@@ -66,6 +67,7 @@ export default function Navbar() {
           {/* CENTER: Tiled Navigation (Desktop) */}
           <div className="hidden md:flex items-center justify-center flex-1 mx-6">
             <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-full border border-border/50">
+               <NavLink href="/" icon={Home} label="Home" active={pathname === "/"} />
                <NavLink href="/jobs" icon={Briefcase} label="Jobs" active={pathname.startsWith("/jobs")} />
                <NavLink href="/companies" icon={Building2} label="Companies" active={pathname.startsWith("/companies")} />
                <NavLink href="/people" icon={Users} label="People" active={pathname.startsWith("/people")} />
@@ -163,6 +165,7 @@ export default function Navbar() {
           <div className="space-y-1 p-4">
             {!session ? (
               <>
+                <MobileNavLink href="/" icon={Home} label="Home" onClick={() => setIsOpen(false)} active={pathname === "/"} />
                 <MobileNavLink href="/login" icon={LogIn} label="Login" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/register" icon={UserPlus} label="Register" onClick={() => setIsOpen(false)} active />
                 <MobileNavLink href="/jobs" icon={Briefcase} label="Browse Jobs" onClick={() => setIsOpen(false)} />
@@ -186,6 +189,7 @@ export default function Navbar() {
                     </div>
                   </div>
 
+                <MobileNavLink href="/" icon={Home} label="Home" onClick={() => setIsOpen(false)} active={pathname === "/"} />
                 <MobileNavLink href="/profile" icon={User} label="My Profile" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/jobs" icon={Briefcase} label="Browse Jobs" onClick={() => setIsOpen(false)} />
                 <MobileNavLink href="/companies" icon={Building2} label="Companies" onClick={() => setIsOpen(false)} />
