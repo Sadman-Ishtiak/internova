@@ -30,10 +30,10 @@ export default function RiskAnalysisPage() {
   };
 
   const handleFlagJob = async (id: string) => {
-    if(!confirm("Are you sure you want to delete this job?")) return;
-    await fetch(`/api/admin/jobs/delete`, { // Assuming generic delete endpoint exists or create specific flag endpoint
+    if(!confirm("Are you sure you want to delete this job? This will verify it as a ghost circular.")) return;
+    await fetch(`/api/admin/jobs/delete`, { 
          method: "POST",
-         body: JSON.stringify({ jobId: id })
+         body: JSON.stringify({ jobId: id, isGhost: true })
     });
     fetchRiskData();
   };

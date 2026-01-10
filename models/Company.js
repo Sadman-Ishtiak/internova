@@ -37,6 +37,7 @@ const CompanySchema = new mongoose.Schema({
   status: { type: String, enum: ['active', 'sunset'], default: 'active' },
   verified: { type: Boolean, default: false },
   featured: { type: Boolean, default: false },
+  ghostStrikeCount: { type: Number, default: 0 }, // Tracks frequency of ghost/inactive circulars
   createdAt: { type: Date, default: Date.now }
 });
 

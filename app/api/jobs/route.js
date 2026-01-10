@@ -21,61 +21,111 @@ export async function GET(req) {
   const limit = Math.min(100, parseInt(searchParams.get('limit') || '20')); // Max 100 per page
   const skip = (page - 1) * limit;
 
-  // Only show jobs where deadline is in the future, unless includeExpired is set
-  let query = {};
-  if (!includeExpired) {
-    query.deadline = { $gt: new Date() };
-  }
-
-  if (companyId) {
-    query.companyId = companyId;
-  }
-
-  if (type && type !== 'all') {
-    query.type = type;
-  }
-
-  if (location && location !== 'All Locations' && location !== 'Location...') {
-    query.location = { $regex: new RegExp(location, 'i') };
-  }
-
-  if (category && category !== 'all') {
-    query.category = category;
-  }
-
-  if (industry && industry !== 'all') {
-    query.industry = industry;
-  }
-
-  if (search) {
-    // Escape regex special characters to prevent ReDoS attacks
-    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const searchRegex = new RegExp(escapedSearch, 'i'); // Case-insensitive
-    query.$or = [
-      { title: { $regex: searchRegex } },
-      { requiredSkills: { $regex: searchRegex } }
-    ];
-  }
-
-  // Populate company details so we can show the company name
-  const jobs = await Job.find(query).sort({ deadline: -1 }).skip(skip).limit(limit);
-  const totalJobs = await Job.countDocuments(query);
-  const totalPages = Math.ceil(totalJobs / limit);
-  
-  return NextResponse.json({ 
-    jobs: jobs.map(job => ({
-      ...job.toObject(),
-      companyId: typeof job.companyId === 'object' ? job.companyId : { _id: job.companyId }
-    })),
-    pagination: {
-      page,
-      limit,
-      totalJobs,
-      totalPages,
-      hasNextPage: page < totalPages,
-      hasPrevPage: page > 1
+  try {
+    // Build Match Stage
+    let matchStage = {};
+    
+    if (!includeExpired) {
+      matchStage.deadline = { $gt: new Date() };
     }
-  });
+
+    if (companyId) {
+      const { ObjectId } = require('mongoose').Types;
+      matchStage.companyId = new ObjectId(companyId);
+    }
+
+    if (type && type !== 'all') {
+      matchStage.type = type;
+    }
+
+    if (location && location !== 'All Locations' && location !== 'Location...') {
+      matchStage.location = { $regex: new RegExp(location, 'i') };
+    }
+
+    if (category && category !== 'all') {
+      matchStage.category = category;
+    }
+
+    if (industry && industry !== 'all') {
+      matchStage.industry = industry;
+    }
+
+    if (search) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escapedSearch, 'i');
+      matchStage.$or = [
+        { title: { $regex: searchRegex } },
+        { requiredSkills: { $regex: searchRegex } }
+      ];
+    }
+
+    // Aggregation Pipeline
+    const pipeline = [
+      { $match: matchStage },
+      {
+        $lookup: {
+          from: 'companies',
+          localField: 'companyId',
+          foreignField: '_id',
+          as: 'companyDetails'
+        }
+      },
+      { $unwind: '$companyDetails' },
+      {
+        $sort: {
+          'companyDetails.ghostStrikeCount': 1, // Prioritize low strike counts
+          deadline: 1 // Then by nearest deadline
+        }
+      },
+      {
+        $project: {
+          // Re-structure to match previous output format where companyId was an object
+          _id: 1,
+          title: 1,
+          location: 1,
+          category: 1,
+          industry: 1,
+          description: 1,
+          type: 1,
+          imageUrl: 1,
+          salary: 1,
+          requiredSkills: 1,
+          deadline: 1,
+          applicants: 1,
+          createdAt: 1,
+          companyId: '$companyDetails' // Populate companyId field with company object
+        }
+      },
+      {
+        $facet: {
+          metadata: [{ $count: "total" }],
+          data: [{ $skip: skip }, { $limit: limit }]
+        }
+      }
+    ];
+
+    const result = await Job.aggregate(pipeline);
+    
+    const jobs = result[0].data;
+    const totalJobs = result[0].metadata[0] ? result[0].metadata[0].total : 0;
+    const totalPages = Math.ceil(totalJobs / limit);
+
+    return NextResponse.json({ 
+      jobs,
+      pagination: {
+        page,
+        limit,
+        totalJobs,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
 
 // POST: Create a new Job (Company Only)

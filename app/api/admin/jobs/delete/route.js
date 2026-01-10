@@ -11,10 +11,16 @@ export async function POST(req) {
   }
 
   try {
-    const { jobId } = await req.json();
+    const { jobId, isGhost } = await req.json();
     await dbConnect();
 
-    await Job.findByIdAndDelete(jobId);
+    const job = await Job.findByIdAndDelete(jobId);
+
+    if (job && isGhost && job.companyId) {
+      // Increment ghost strike count for the company
+      const Company = (await import('@/models/Company')).default;
+      await Company.findByIdAndUpdate(job.companyId, { $inc: { ghostStrikeCount: 1 } });
+    }
     
     return NextResponse.json({ success: true });
   } catch (error) {
