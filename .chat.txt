@@ -32,3 +32,25 @@
 - **Dynamic Limits:** User application limits are now boosted based on their certifications (Professional, Academic, etc.).
 - **Ghost Rating System:** Companies get a `ghostStrikeCount` when their ghost circulars are verified and deleted by admins.
 - **Prioritization:** The job feed now automatically deprioritizes circulars from companies with high ghost strike counts.
+
+## 7. Skill Search Enhancements
+- Fixed the skill filter on the `/people` page by adding state management and interactive toggle buttons.
+- Upgraded the skill filter to a **typable dropdown (Combobox)** for better UX.
+- Implemented a backend API endpoint (`/api/stats/skills`) to fetch and suggest the top 50 most popular skills dynamically.
+
+## 8. Authentication & Google OAuth
+- Validated readiness for Google OAuth login and signup.
+- Added a 'Sign up with Google' button to the registration page.
+- Configured `.env.local` with the provided Google Client ID and Secret.
+- Resolved 'Server error' by generating a secure `AUTH_SECRET` and configuring `NEXTAUTH_URL` for deployment.
+- Instructed on configuring the 'Authorized redirect URIs' in Google Cloud Console to fix `redirect_uri_mismatch`.
+
+## 9. UI/UX Refinements (Dark Mode & Visibility)
+- Improved text visibility in dark mode across the entire application (Home, Jobs, Companies, Profile, Admin).
+- Lightened colors for 'indigo', 'blue', 'green', and 'red' text elements to ensure readability against dark backgrounds.
+- Updated Navbar dropdown text colors (Logout & Admin Panel) for better contrast.
+
+## 10. Print Optimization
+- Enhanced the CV print view for User Profiles.
+- Replaced the 'View Credential' hyperlink with the full, visible URL specifically in print mode, ensuring certifications are verifiable on physical copies.
+
