@@ -174,9 +174,14 @@ export default function ProfilePage() {
                           <p className="font-bold text-sm text-foreground truncate">{cert.name}</p>
                           <p className="text-xs text-muted-foreground">{cert.issuer}</p>
                           {cert.url && (
-                            <a href={cert.url} target="_blank" className="text-[10px] text-indigo-600 font-bold hover:underline flex items-center gap-1 mt-1">
-                              Verify <ExternalLink className="w-2.5 h-2.5" />
-                            </a>
+                            <>
+                              <a href={cert.url} target="_blank" className="text-[10px] text-indigo-600 font-bold hover:underline flex items-center gap-1 mt-1 print:hidden">
+                                Verify <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                              <div className="hidden print:block text-[9px] text-muted-foreground mt-1 break-all">
+                                {cert.url}
+                              </div>
+                            </>
                           )}
                        </div>
                     </div>

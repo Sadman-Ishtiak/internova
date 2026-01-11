@@ -173,7 +173,14 @@ export default function PublicProfilePage() {
                                    {cert.date && <p className="text-sm font-medium text-gray-500">{new Date(cert.date).toLocaleDateString('en-GB')}</p>}
                                  </div>
                                </div>
-                               {cert.url && <a href={cert.url} target="_blank" className="text-indigo-600 text-xs hover:underline block mt-2 font-medium">View Credential &rarr;</a>}
+                               {cert.url && (
+                                 <>
+                                   <a href={cert.url} target="_blank" className="text-indigo-600 text-xs hover:underline block mt-2 font-medium print:hidden">View Credential &rarr;</a>
+                                   <div className="hidden print:block text-[10px] text-gray-500 mt-1 break-all">
+                                     {cert.url}
+                                   </div>
+                                 </>
+                               )}
                              </div>
                            ))}
                          </div>
