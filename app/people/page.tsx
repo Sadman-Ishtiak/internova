@@ -212,13 +212,13 @@ export default function PeoplePage() {
                            />
                         </div>
                         <div className="flex-1 text-center md:text-left">
-                          <h3 className="font-bold text-xl mb-1 group-hover:text-indigo-600 transition-colors">{person.name}</h3>
-                          <p className="text-indigo-600 text-sm font-medium mb-2 flex items-center gap-1 justify-center md:justify-start">
+                          <h3 className="font-bold text-xl mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{person.name}</h3>
+                          <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-2 flex items-center gap-1 justify-center md:justify-start">
                             <GraduationCap className="w-4 h-4" /> Student / Candidate
                           </p>
                           <div className="flex flex-wrap justify-center md:justify-start gap-1 mt-2">
                              {person.skills?.slice(0, 5).map((skill: string) => (
-                               <span key={skill} className="text-[10px] px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 rounded text-indigo-600 font-bold uppercase tracking-tighter">
+                               <span key={skill} className="text-[10px] px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 rounded text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-tighter">
                                  {skill}
                                </span>
                              ))}
@@ -247,8 +247,8 @@ export default function PeoplePage() {
                                />
                             </div>
                             <div className="flex-1">
-                              <h3 className="font-bold text-lg mb-1 group-hover:text-indigo-600 transition-colors">{person.name}</h3>
-                              <p className="text-indigo-600 text-xs font-bold mb-2 flex items-center gap-1 uppercase tracking-wider">
+                              <h3 className="font-bold text-lg mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{person.name}</h3>
+                              <p className="text-indigo-600 dark:text-indigo-400 text-xs font-bold mb-2 flex items-center gap-1 uppercase tracking-wider">
                                 <GraduationCap className="w-3 h-3" /> Candidate
                               </p>
                               <div className="flex flex-wrap gap-1 mt-2">

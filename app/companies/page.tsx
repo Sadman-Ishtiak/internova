@@ -310,19 +310,19 @@ export default function CompaniesPage() {
                         <div className="flex-1 text-center md:text-left">
                           <h3 className="font-bold text-xl mb-1 group-hover:text-indigo-600 transition-colors">{company.name}</h3>
                           <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-muted-foreground">
-                            <span className="text-indigo-600 font-medium">{company.industry}</span>
+                            <span className="text-indigo-600 dark:text-indigo-400 font-medium">{company.industry}</span>
                             {company.contact?.location && (
                               <span className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4 text-indigo-500" /> {company.contact.location}
+                                <MapPin className="w-4 h-4 text-indigo-500 dark:text-indigo-400" /> {company.contact.location}
                               </span>
                             )}
                             <span className="flex items-center gap-1">
-                              <Briefcase className="w-4 h-4 text-green-500" /> {company.stats.total} Openings
+                              <Briefcase className="w-4 h-4 text-green-500 dark:text-green-400" /> {company.stats.total} Openings
                             </span>
                           </div>
                         </div>
                         <div className="flex-shrink-0">
-                           <button className="px-6 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 text-sm font-bold rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                           <button className="px-6 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-sm font-bold rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all">
                               View Profile
                            </button>
                         </div>
@@ -346,10 +346,10 @@ export default function CompaniesPage() {
                             </div>
                             <div className="flex-1">
                               <h3 className="font-bold text-lg mb-1 group-hover:text-indigo-600 transition-colors">{company.name}</h3>
-                              <p className="text-indigo-600 text-sm font-medium mb-2">{company.industry}</p>
+                              <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-2">{company.industry}</p>
                               {company.contact?.location && (
                                 <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                  <MapPin className="w-3 h-3" /> {company.contact.location}
+                                  <MapPin className="w-3 h-3 text-indigo-500 dark:text-indigo-400" /> {company.contact.location}
                                 </p>
                               )}
                             </div>
@@ -359,7 +359,7 @@ export default function CompaniesPage() {
                              <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider">
                                 <span className="text-muted-foreground">Open Positions</span>
                                 {company.stats.total > 0 ? (
-                                  <span className="text-green-600 px-2 py-0.5 bg-green-50 dark:bg-green-900/20 rounded">
+                                  <span className="text-green-600 dark:text-green-400 px-2 py-0.5 bg-green-50 dark:bg-green-900/20 rounded">
                                     {company.stats.total} Active
                                   </span>
                                 ) : (
@@ -368,12 +368,12 @@ export default function CompaniesPage() {
                              </div>
                              <div className="flex gap-3 mt-2">
                                 {company.stats.internships > 0 && (
-                                  <span className="text-[10px] px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded flex items-center gap-1">
+                                  <span className="text-[10px] px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded flex items-center gap-1">
                                     <Briefcase className="w-2.5 h-2.5" /> {company.stats.internships} Internships
                                   </span>
                                 )}
                                 {company.stats.jobs > 0 && (
-                                  <span className="text-[10px] px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded flex items-center gap-1">
+                                  <span className="text-[10px] px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded flex items-center gap-1">
                                     <Briefcase className="w-2.5 h-2.5" /> {company.stats.jobs} Jobs
                                   </span>
                                 )}

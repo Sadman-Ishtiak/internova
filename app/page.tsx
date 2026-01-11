@@ -112,11 +112,11 @@ export default function Home() {
             
             {/* Text Content */}
             <div className="z-10">
-              <span className="inline-block py-1 px-3 rounded-full bg-indigo-100 text-indigo-600 text-sm font-semibold mb-4">
+              <span className="inline-block py-1 px-3 rounded-full bg-indigo-100 text-indigo-600 dark:text-indigo-400 text-sm font-semibold mb-4">
                 We have 150,000+ live jobs
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                Find your dream internship in <span className="text-indigo-600">Bangladesh</span>
+                Find your dream internship in <span className="text-indigo-600 dark:text-indigo-400">Bangladesh</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg">
                 The most trusted platform for Bangladeshi students to find internships and entry-level roles in top local and multinational companies.
@@ -202,9 +202,9 @@ export default function Home() {
                   className="group p-6 bg-card border border-border rounded-xl hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer"
                 >
                   <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                    <Icon className="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors" />
+                    <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-400 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-1 group-hover:text-indigo-600 transition-colors line-clamp-1">{cat.name}</h3>
+                  <h3 className="font-semibold text-lg mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">{cat.name}</h3>
                   <p className="text-sm text-muted-foreground">{cat.count} Jobs</p>
                 </div>
               );
@@ -212,7 +212,7 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-10">
-            <Link href="/jobs" className="inline-flex items-center text-indigo-600 font-medium hover:underline">
+            <Link href="/jobs" className="inline-flex items-center text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
               Browse All Categories <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
@@ -271,7 +271,7 @@ export default function Home() {
 
                     {/* Job Details */}
                     <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 transition-colors">
+                      <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                         <Link href={`/jobs/${job._id}`}>{job.title}</Link>
                       </h3>
                       <p className="text-sm text-muted-foreground mb-2">{job.companyId?.name || "InternNova Company"}</p>
@@ -293,14 +293,14 @@ export default function Home() {
                     <div className="flex flex-col items-center md:items-end gap-3 min-w-[140px]">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         job.type === 'internship' 
-                          ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30' 
-                          : 'bg-green-100 text-green-600 dark:bg-green-900/30'
+                          ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' 
+                          : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
                       }`}>
                         {job.type === 'internship' ? 'Internship' : 'Full Time'}
                       </span>
                       <button 
                          onClick={() => handleApply(job._id)}
-                         className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 text-sm font-medium rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all"
+                         className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-sm font-medium rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all"
                       >
                         Apply Now
                       </button>

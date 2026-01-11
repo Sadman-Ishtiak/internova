@@ -127,7 +127,7 @@ export default function Navbar() {
                     )}
 
                     {session.user?.role === 'admin' && (
-                       <DropdownItem href="/admin" icon={ShieldAlert} label="Admin Panel" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setIsProfileOpen(false)} />
+                       <DropdownItem href="/admin" icon={ShieldAlert} label="Admin Panel" className="text-destructive hover:text-destructive hover:bg-destructive/10 dark:text-red-400 dark:hover:bg-red-900/30" onClick={() => setIsProfileOpen(false)} />
                     )}
 
                     <button
@@ -135,7 +135,7 @@ export default function Navbar() {
                         setIsProfileOpen(false);
                         signOut({ callbackUrl: '/login' });
                       }}
-                      className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                      className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Logout

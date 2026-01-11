@@ -126,15 +126,15 @@ export default function JobDetailsPage() {
                <div className="p-8">
                   <div className="flex flex-wrap gap-4 mb-8">
                      <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-border text-sm font-bold">
-                        <Clock className="w-4 h-4 text-indigo-500" />
+                        <Clock className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
                         <span className="capitalize">{job.type}</span>
                      </div>
                      <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-border text-sm font-bold">
-                        <MapPin className="w-4 h-4 text-red-500" />
+                        <MapPin className="w-4 h-4 text-red-500 dark:text-red-400" />
                         <span>{job.location || "Remote"}</span>
                      </div>
                      <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-border text-sm font-bold">
-                        <DollarSign className="w-4 h-4 text-green-500" />
+                        <DollarSign className="w-4 h-4 text-green-500 dark:text-green-400" />
                         <span>{job.salary?.min ? `${job.salary.min} - ${job.salary.max} ${job.salary.currency}` : "Competitive"}</span>
                      </div>
                   </div>
@@ -165,7 +165,7 @@ export default function JobDetailsPage() {
                     <h3 className="text-xl font-bold mb-6 text-foreground">Required Skills</h3>
                     <div className="flex flex-wrap gap-3">
                       {job.requiredSkills.map((skill: string, i: number) => (
-                        <span key={i} className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-xl font-bold text-sm border border-indigo-100 dark:border-indigo-900/30 transition-all hover:scale-105">
+                        <span key={i} className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl font-bold text-sm border border-indigo-100 dark:border-indigo-900/30 transition-all hover:scale-105">
                           {skill}
                         </span>
                       ))}

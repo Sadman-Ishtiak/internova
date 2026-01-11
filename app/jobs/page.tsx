@@ -116,7 +116,7 @@ function JobsList() {
             <div className="lg:col-span-1 space-y-6">
               <div className="bg-card border border-border rounded-xl p-6 sticky top-24">
                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
-                  <Filter className="w-5 h-5 text-indigo-600" />
+                  <Filter className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   <h2 className="font-bold text-lg">Filters</h2>
                 </div>
 
@@ -151,7 +151,7 @@ function JobsList() {
                             name="type" 
                             checked={typeFilter === type.id}
                             onChange={() => setTypeFilter(type.id)}
-                            className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-border" 
+                            className="w-4 h-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-border" 
                           />
                           <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{type.label}</span>
                         </label>
@@ -225,7 +225,7 @@ function JobsList() {
 
                   <button 
                     onClick={() => { setSearchTerm(""); setTypeFilter("all"); setLocationFilter("All Locations"); setCategoryFilter("all"); setIndustryFilter("all"); }}
-                    className="w-full py-2 text-indigo-600 text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                    className="w-full py-2 text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
                   >
                     Clear All Filters
                   </button>
@@ -290,30 +290,30 @@ function JobsList() {
                           {/* Job Details */}
                           <div className="flex-1 text-center md:text-left">
                             <div className="flex flex-col md:flex-row md:items-center gap-2 mb-1">
-                              <h3 className="text-xl font-bold group-hover:text-indigo-600 transition-colors">
+                              <h3 className="text-xl font-bold group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                 <Link href={`/jobs/${job._id}`}>{job.title}</Link>
                               </h3>
                               <span className="hidden md:inline text-slate-300">|</span>
                               <div className="flex items-center gap-1.5 justify-center md:justify-start">
                                 <span className="text-muted-foreground text-sm">{job.companyId?.name || "InternNova Company"}</span>
                                 {job.companyId?.verified && (
-                                  <ShieldCheck className="w-3.5 h-3.5 text-green-500 fill-green-50" />
+                                  <ShieldCheck className="w-3.5 h-3.5 text-green-500 dark:text-green-400 fill-green-50" />
                                 )}
                               </div>
                             </div>
                             
                             <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-muted-foreground mt-3">
                               <span className="flex items-center gap-1.5">
-                                <Briefcase className="w-4 h-4 text-indigo-500" /> {job.category || "General"}
+                                <Briefcase className="w-4 h-4 text-indigo-500 dark:text-indigo-400" /> {job.category || "General"}
                               </span>
                               <span className="flex items-center gap-1.5">
                                 <Building2 className="w-4 h-4 text-slate-500" /> {job.industry || "General"}
                               </span>
                               <span className="flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4 text-indigo-500" /> {job.location || "Remote"}
+                                <MapPin className="w-4 h-4 text-indigo-500 dark:text-indigo-400" /> {job.location || "Remote"}
                               </span>
                               <span className="flex items-center gap-1.5">
-                                <DollarSign className="w-4 h-4 text-green-500" /> 
+                                <DollarSign className="w-4 h-4 text-green-500 dark:text-green-400" /> 
                                 {job.salary?.min ? `${job.salary.min} - ${job.salary.max}` : "Competitive"}
                               </span>
                               <span className="flex items-center gap-1.5">
@@ -327,8 +327,8 @@ function JobsList() {
                           <div className="flex flex-row md:flex-col items-center md:items-end gap-3 min-w-[140px] w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 mt-2 md:mt-0">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                               job.type === 'internship' 
-                                ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30' 
-                                : 'bg-green-100 text-green-600 dark:bg-green-900/30'
+                                ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' 
+                                : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
                             }`}>
                               {job.type === 'internship' ? 'Internship' : 'Full Time'}
                             </span>
@@ -362,22 +362,22 @@ function JobsList() {
                           </span>
                         </div>
 
-                        <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                        <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
                           <Link href={`/jobs/${job._id}`}>{job.title}</Link>
                         </h3>
                         <p className="text-muted-foreground text-sm mb-4">{job.companyId?.name || "InternNova Company"}</p>
 
                         <div className="space-y-2 mb-6 flex-grow">
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Briefcase className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                            <Briefcase className="w-4 h-4 text-indigo-500 dark:text-indigo-400 flex-shrink-0" />
                             <span className="truncate">{job.category || "General"}</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <MapPin className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 text-indigo-500 dark:text-indigo-400 flex-shrink-0" />
                             <span className="truncate">{job.location || "Remote"}</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <DollarSign className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            <DollarSign className="w-4 h-4 text-green-500 dark:text-green-400 flex-shrink-0" />
                             <span>{job.salary?.min ? `${job.salary.min} - ${job.salary.max}` : "Competitive"}</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
@@ -388,7 +388,7 @@ function JobsList() {
 
                         <button 
                           onClick={() => handleApply(job._id)}
-                          className="w-full py-3 bg-slate-50 dark:bg-slate-800 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white text-sm font-bold rounded-xl transition-all border border-indigo-100 dark:border-indigo-900/30 group-hover:border-indigo-600 shadow-sm"
+                          className="w-full py-3 bg-slate-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white text-sm font-bold rounded-xl transition-all border border-indigo-100 dark:border-indigo-900/30 group-hover:border-indigo-600 shadow-sm"
                         >
                           Apply For Job
                         </button>
