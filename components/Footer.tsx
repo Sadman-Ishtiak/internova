@@ -12,7 +12,7 @@ export default function Footer() {
             {/* Brand & Social */}
             <div className="lg:col-span-2">
               <Link href="/" className="text-2xl font-bold text-white mb-4 inline-block">
-                Internova
+                InternNova
               </Link>
               <p className="text-slate-400 mb-6 leading-relaxed max-w-xs">
                 Connecting talented students with top companies for internships and entry-level jobs. Start your career journey with us today.
@@ -62,7 +62,7 @@ export default function Footer() {
       {/* FOOTER BOTTOM */}
       <div className="bg-slate-950 py-6 border-t border-slate-800">
         <div className="container mx-auto px-4 text-center text-slate-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} Internova. Developed By Sadman Ishtiak and Md. Jahid Hasan Khan Ornob.</p>
+          <p>&copy; {new Date().getFullYear()} InternNova. Developed By Sadman Ishtiak and Md. Jahid Hasan Khan Ornob.</p>
         </div>
       </div>
     </footer>

@@ -59,7 +59,7 @@ export default function Navbar() {
                 <Briefcase className="w-6 h-6 text-primary" />
               </div>
               <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                Internova
+                InternNova
               </span>
             </Link>
           </div>

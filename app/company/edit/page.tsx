@@ -140,7 +140,7 @@ export default function EditCompanyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-black tracking-tight">Company Profile</h1>
-              <p className="text-muted-foreground">Manage your brand's presence on Internova.</p>
+              <p className="text-muted-foreground">Manage your brand's presence on InternNova.</p>
             </div>
           </div>
         </div>

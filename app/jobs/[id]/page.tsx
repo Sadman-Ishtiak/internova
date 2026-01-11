@@ -240,7 +240,7 @@ export default function JobDetailsPage() {
                     {isExpired ? "Applications Closed" : "Apply For This Role"}
                   </button>
                   <p className="text-[10px] text-center text-muted-foreground uppercase font-bold tracking-widest">
-                    {isExpired ? "This circular has expired" : "Secure application through Internova"}
+                    {isExpired ? "This circular has expired" : "Secure application through InternNova"}
                   </p>
                </div>
             </div>

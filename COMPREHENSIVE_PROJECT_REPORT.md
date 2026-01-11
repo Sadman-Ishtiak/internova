@@ -1,4 +1,4 @@
-# INTERNOVA - Job Portal Platform
+# InternNova - Job Portal Platform
 ## Complete Technical Documentation & Security Audit Report
 
 ---
@@ -20,15 +20,15 @@
 
 ## 🎯 Project Overview
 
-### What is Internova?
+### What is InternNova?
 
-**Internova** is a comprehensive job and internship portal platform designed to bridge the gap between job seekers and employers. The platform provides a modern, efficient, and secure ecosystem for:
+**InternNova** is a comprehensive job and internship portal platform designed to bridge the gap between job seekers and employers. The platform provides a modern, efficient, and secure ecosystem for:
 
 - **Job Seekers**: Find and apply for jobs/internships with AI-powered skill matching
 - **Employers**: Post job circulars, manage applications, and identify qualified candidates
 - **Administrators**: Oversee the platform, manage users, and maintain platform integrity
 
-**Platform Name**: Internova (Version 0.1.0)
+**Platform Name**: InternNova (Version 0.1.0)
 **Type**: Full-Stack Web Application
 **Architecture**: Server-Side Rendering (SSR) with API-Based Backend
 
@@ -36,7 +36,7 @@
 
 ## 💼 Platform Importance & Use Cases
 
-### Why Internova Matters
+### Why InternNova Matters
 
 #### For Job Seekers:
 1. **Easy Job Discovery**: Browse and search through active job postings with smart filtering
@@ -996,8 +996,8 @@ file: <image file>
 **CSV Format**:
 ```
 Full Name,Email,Match Score (%),Profile Link
-"Jane Smith","jane@example.com","95","https://internova.com/profile/123"
-"John Doe","john@example.com","80","https://internova.com/profile/456"
+"Jane Smith","jane@example.com","95","https://InternNova.com/profile/123"
+"John Doe","john@example.com","80","https://InternNova.com/profile/456"
 ```
 
 ---
@@ -1322,7 +1322,7 @@ AUTH_SECRET=<same-as-NEXTAUTH_SECRET>
 
 ## 🎓 Conclusion
 
-**Internova** is a modern, secure, and scalable job portal platform with:
+**InternNova** is a modern, secure, and scalable job portal platform with:
 
 1. **Robust Security**: All critical vulnerabilities fixed, encryption enabled
 2. **User-Friendly**: Simple job application process with skill matching

@@ -10,7 +10,7 @@ export default function LegalPage() {
           <section className="bg-blue-50 p-4 rounded-lg border border-blue-100">
             <h2 className="text-xl font-bold text-blue-900 mb-2">Sample Project Notice</h2>
             <p className="text-blue-800">
-              Internova is a <strong>Sample Project</strong>. It was built as a portfolio piece and proof-of-concept. 
+              InternNova is a <strong>Sample Project</strong>. It was built as a portfolio piece and proof-of-concept. 
               While it is functional, it is not intended to be a final commercial product. Data entered here 
               is for demonstration purposes.
             </p>
@@ -33,7 +33,7 @@ export default function LegalPage() {
           {/* Full MIT License */}
           <section className="bg-gray-100 p-6 rounded-lg font-mono text-xs overflow-auto">
             <h2 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-widest font-sans">The MIT License (MIT)</h2>
-            <p>Copyright (c) {new Date().getFullYear()} Internova Developers</p>
+            <p>Copyright (c) {new Date().getFullYear()} InternNova Developers</p>
             <br />
             <p>
               Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 

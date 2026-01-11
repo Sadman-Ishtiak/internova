@@ -295,7 +295,7 @@ function JobsList() {
                               </h3>
                               <span className="hidden md:inline text-slate-300">|</span>
                               <div className="flex items-center gap-1.5 justify-center md:justify-start">
-                                <span className="text-muted-foreground text-sm">{job.companyId?.name || "Internova Company"}</span>
+                                <span className="text-muted-foreground text-sm">{job.companyId?.name || "InternNova Company"}</span>
                                 {job.companyId?.verified && (
                                   <ShieldCheck className="w-3.5 h-3.5 text-green-500 fill-green-50" />
                                 )}
@@ -365,7 +365,7 @@ function JobsList() {
                         <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 transition-colors line-clamp-1">
                           <Link href={`/jobs/${job._id}`}>{job.title}</Link>
                         </h3>
-                        <p className="text-muted-foreground text-sm mb-4">{job.companyId?.name || "Internova Company"}</p>
+                        <p className="text-muted-foreground text-sm mb-4">{job.companyId?.name || "InternNova Company"}</p>
 
                         <div className="space-y-2 mb-6 flex-grow">
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">

@@ -274,7 +274,7 @@ export default function Home() {
                       <h3 className="text-lg font-bold mb-1 group-hover:text-indigo-600 transition-colors">
                         <Link href={`/jobs/${job._id}`}>{job.title}</Link>
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-2">{job.companyId?.name || "Internova Company"}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{job.companyId?.name || "InternNova Company"}</p>
                       
                       <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">

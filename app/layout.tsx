@@ -9,8 +9,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Internova",
-  description: "Find your next internship or job with Internova",
+  title: "InternNova",
+  description: "Find your next internship or job with InternNova",
 };
 
 export default function RootLayout({

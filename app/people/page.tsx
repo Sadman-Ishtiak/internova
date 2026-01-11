@@ -20,7 +20,18 @@ export default function PeoplePage() {
   const [people, setPeople] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [skillFilter, setSkillFilter] = useState("");
+  const [allSkills, setAllSkills] = useState<string[]>([]);
+  const [isSkillDropdownOpen, setIsSkillDropdownOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
+
+  useEffect(() => {
+    // Fetch Skills List on Load
+    fetch("/api/stats/skills")
+      .then(res => res.json())
+      .then(data => setAllSkills(data.skills || []))
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -36,13 +47,14 @@ export default function PeoplePage() {
       clearTimeout(delayDebounceFn);
       window.removeEventListener("refresh-data", handleRefresh);
     };
-  }, [searchTerm]);
+  }, [searchTerm, skillFilter]);
 
   const fetchPeople = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (searchTerm) params.append("search", searchTerm);
+      if (skillFilter) params.append("skill", skillFilter);
       
       const res = await fetch(`/api/people?${params.toString()}`);
       const data = await res.json();
@@ -99,20 +111,47 @@ export default function PeoplePage() {
                     </div>
                   </div>
 
-                  {/* Skills (Static Placeholder) */}
-                  <div>
+                  {/* Skills (Typable Dropdown) */}
+                  <div className="relative">
                     <label className="block text-sm font-semibold mb-2 text-foreground">Skills</label>
-                    <div className="flex flex-wrap gap-2">
-                      {["React", "Node.js", "Python", "UI/UX", "Marketing"].map(skill => (
-                        <button key={skill} className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md hover:bg-indigo-600 hover:text-white transition-colors">
-                          {skill}
-                        </button>
-                      ))}
-                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. React, Python..." 
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all"
+                      value={skillFilter}
+                      onChange={(e) => {
+                        setSkillFilter(e.target.value);
+                        setIsSkillDropdownOpen(true);
+                      }}
+                      onFocus={() => setIsSkillDropdownOpen(true)}
+                      onBlur={() => setTimeout(() => setIsSkillDropdownOpen(false), 200)} // Delay to allow click
+                    />
+                    
+                    {isSkillDropdownOpen && (
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-900 border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {allSkills
+                          .filter(s => s.toLowerCase().includes(skillFilter.toLowerCase()))
+                          .map((skill, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                setSkillFilter(skill);
+                                setIsSkillDropdownOpen(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              {skill}
+                            </button>
+                          ))}
+                        {allSkills.filter(s => s.toLowerCase().includes(skillFilter.toLowerCase())).length === 0 && (
+                           <div className="px-4 py-2 text-xs text-muted-foreground italic">No matching skills found</div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <button 
-                    onClick={() => { setSearchTerm(""); }}
+                    onClick={() => { setSearchTerm(""); setSkillFilter(""); }}
                     className="w-full py-2 text-indigo-600 text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
                   >
                     Reset Filters

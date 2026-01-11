@@ -19,7 +19,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Empowering the Future of <span className="text-indigo-400">Bangladesh's Talent</span></h1>
           <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            Internova is dedicated to bridging the gap between ambitious students and top-tier companies, 
+            InternNova is dedicated to bridging the gap between ambitious students and top-tier companies, 
             creating a seamless transition from education to professional excellence.
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function AboutPage() {
       <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Internova?</h2>
+            <h2 className="text-3xl font-bold mb-4">Why Choose InternNova?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               We focus on the unique needs of both students and employers to create the perfect match.
             </p>
@@ -116,7 +116,7 @@ export default function AboutPage() {
             <div className="relative z-10">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to start your journey?</h2>
               <p className="text-indigo-100 mb-10 max-w-xl mx-auto">
-                Join Internova today and take the first step towards a successful career.
+                Join InternNova today and take the first step towards a successful career.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link href="/jobs" className="bg-white text-indigo-600 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition-colors">

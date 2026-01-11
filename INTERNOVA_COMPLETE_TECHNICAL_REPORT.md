@@ -1,4 +1,4 @@
-# INTERNOVA - Job Portal Platform
+# InternNova - Job Portal Platform
 Complete Technical Documentation & Security Audit Report
 
 ================================================================================
@@ -49,9 +49,9 @@ KEY STATISTICS
 
 SECTION 2: PROJECT OVERVIEW
 
-WHAT IS INTERNOVA?
+WHAT IS InternNova?
 
-Internova is a comprehensive job and internship portal platform designed to 
+InternNova is a comprehensive job and internship portal platform designed to 
 bridge the gap between job seekers and employers. The platform provides a modern, 
 efficient, and secure ecosystem for:
 
@@ -60,7 +60,7 @@ efficient, and secure ecosystem for:
 - Administrators: Oversee the platform, manage users, and maintain platform integrity
 
 PLATFORM DETAILS
-Platform Name: Internova (Version 0.1.0)
+Platform Name: InternNova (Version 0.1.0)
 Type: Full-Stack Web Application
 Architecture: Server-Side Rendering (SSR) with API-Based Backend
 Hosting: Vercel (Next.js native platform)
@@ -1203,8 +1203,8 @@ AUTOMATED/SCHEDULED ENDPOINTS
     
     CSV Format Example:
     Full Name,Email,Match Score (%),Profile Link
-    "Jane Smith","jane@example.com","95","https://internova.com/profile/123"
-    "John Doe","john@example.com","80","https://internova.com/profile/456"
+    "Jane Smith","jane@example.com","95","https://InternNova.com/profile/123"
+    "John Doe","john@example.com","80","https://InternNova.com/profile/456"
 
 ================================================================================
 
@@ -1643,7 +1643,7 @@ DOCUMENTATION CREATED
    - API documentation
    - Security measures
 
-5. INTERNOVA_COMPLETE_TECHNICAL_REPORT.md (This file)
+5. InternNova_COMPLETE_TECHNICAL_REPORT.md (This file)
    - Consolidated master report
    - All information from other documents
    - No emoji characters
