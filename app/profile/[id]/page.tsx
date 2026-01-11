@@ -23,8 +23,8 @@ export default function PublicProfilePage() {
     if (id) fetchUser();
   }, [id]);
 
-  if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
-  if (!user) return <div className="p-10 text-center text-red-500">User not found.</div>;
+  if (loading) return <div className="p-10 text-center">Loading...</div>;
+  if (!user) return <div className="p-10 text-center text-red-500 dark:text-red-400">User not found.</div>;
 
   return (
     <div className="min-h-screen p-8">

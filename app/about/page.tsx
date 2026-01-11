@@ -33,7 +33,7 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12">
             <div className="bg-card border border-border p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center mb-6">
-                <Target className="w-8 h-8 text-indigo-600" />
+                <Target className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
               </div>
               <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
               <p className="text-muted-foreground leading-relaxed">
@@ -43,7 +43,7 @@ export default function AboutPage() {
             </div>
             <div className="bg-card border border-border p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6">
-                <Lightbulb className="w-8 h-8 text-blue-600" />
+                <Lightbulb className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
               <p className="text-muted-foreground leading-relaxed">
